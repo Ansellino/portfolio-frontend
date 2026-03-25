@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
 import { skillSchema } from '@/validations/skill.schema';
 import { skillsApi } from '@/api/skills.api';
+import { allSkillCategoryValues, skillCategoryGroups } from '@/constants/skillCategories';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/composables/useToast';
 
@@ -16,7 +17,7 @@ const errors = ref<Record<string, string>>({});
 
 const form = reactive({
   name: '',
-  category: 'frontend',
+  category: 'programming_language',
   iconUrl: '',
 });
 
@@ -31,7 +32,7 @@ watch(
     const data = payload?.data ?? payload;
     if (!data) return;
     form.name = data.name ?? '';
-    form.category = data.category ?? 'frontend';
+    form.category = data.category ?? 'programming_language';
     form.iconUrl = data.iconUrl ?? '';
   },
   { immediate: true }
@@ -74,11 +75,13 @@ function submit() {
     <div class="grid gap-3 md:grid-cols-2">
       <input v-model="form.name" class="rounded-md border p-2" placeholder="Skill name" />
       <select v-model="form.category" class="rounded-md border p-2">
-        <option value="frontend">Frontend</option>
-        <option value="backend">Backend</option>
-        <option value="devops">DevOps</option>
-        <option value="design">Design</option>
-        <option value="other">Other</option>
+        <option value="" disabled>Select skill category</option>
+        <optgroup v-for="group in skillCategoryGroups" :key="group.group" :label="group.group">
+          <option v-for="option in group.options" :key="option.value" :value="option.value">{{ option.label }}</option>
+        </optgroup>
+        <option v-if="form.category && !allSkillCategoryValues.includes(form.category)" :value="form.category">
+          Current: {{ form.category }}
+        </option>
       </select>
       <input v-model="form.iconUrl" class="rounded-md border p-2 md:col-span-2" placeholder="Icon URL" />
     </div>
