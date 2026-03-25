@@ -59,9 +59,6 @@ async function submit() {
 			<div class="space-y-1">
 				<h1 class="text-2xl font-semibold">Admin Login</h1>
 				<p class="text-sm text-muted-foreground">Sign in to manage portfolio content.</p>
-				<p class="text-xs text-muted-foreground">
-					Dev dummy: {{ dummyEmail }} / {{ dummyPassword }}
-				</p>
 			</div>
 
 			<div class="space-y-2">
