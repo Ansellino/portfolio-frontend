@@ -104,6 +104,23 @@ function fmt(value?: string) {
 	return date.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
+function getResponsibilities(item: any): string[] {
+	if (Array.isArray(item?.responsibilities)) {
+		return item.responsibilities
+			.map((value: unknown) => (typeof value === 'string' ? value.trim() : ''))
+			.filter((value: string) => value.length > 0);
+	}
+
+	if (typeof item?.responsible === 'string' && item.responsible.trim().length > 0) {
+		return item.responsible
+			.split(/\r?\n|;/)
+			.map((value: string) => value.trim())
+			.filter((value: string) => value.length > 0);
+	}
+
+	return [];
+}
+
 function printResume() {
 	window.print();
 }
@@ -139,7 +156,7 @@ function printResume() {
 					<a v-if="profile.linkedinUrl" :href="profile.linkedinUrl" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">LinkedIn</a>
 				</div>
 
-				<p v-if="profile.bio" class="mt-4 text-sm leading-relaxed">{{ profile.bio }}</p>
+				<p v-if="profile.bio" class="mt-4 text-justify text-sm leading-relaxed">{{ profile.bio }}</p>
 			</header>
 
 			<section class="mt-6 space-y-6">
@@ -155,6 +172,11 @@ function printResume() {
 								<p class="text-sm text-muted-foreground">{{ fmt(item.startDate) }} - {{ fmt(item.endDate) }}</p>
 							</div>
 							<p v-if="item.description" class="mt-2 text-sm leading-relaxed">{{ item.description }}</p>
+							<ul v-if="getResponsibilities(item).length" class="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-muted-foreground">
+								<li v-for="(responsibility, index) in getResponsibilities(item)" :key="`${item.id}-responsibility-${index}`">
+									{{ responsibility }}
+								</li>
+							</ul>
 						</article>
 					</div>
 				</div>

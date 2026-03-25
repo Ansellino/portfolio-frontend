@@ -18,7 +18,6 @@ const form = reactive({
   name: '',
   category: 'frontend',
   iconUrl: '',
-  isPublished: true,
 });
 
 const detailQuery = useQuery({
@@ -34,7 +33,6 @@ watch(
     form.name = data.name ?? '';
     form.category = data.category ?? 'frontend';
     form.iconUrl = data.iconUrl ?? '';
-    form.isPublished = data.isPublished !== false;
   },
   { immediate: true }
 );
@@ -46,11 +44,20 @@ const updateMutation = useMutation({
     toast.success('Skill updated');
     router.push('/admin/skills');
   },
-  onError: () => toast.error('Failed to update skill'),
+  onError: (error: any) => {
+    const apiMessage = error?.response?.data?.message;
+    const detail = Array.isArray(apiMessage) ? apiMessage.join(', ') : apiMessage;
+    toast.error(detail ? `Failed to update skill: ${detail}` : 'Failed to update skill');
+  },
 });
 
 function submit() {
-  const parsed = skillSchema.safeParse(form);
+  const normalized = {
+    ...form,
+    iconUrl: form.iconUrl?.trim() || undefined,
+  };
+
+  const parsed = skillSchema.safeParse(normalized);
   if (!parsed.success) {
     errors.value = Object.fromEntries(parsed.error.issues.map((issue) => [issue.path.join('.'), issue.message]));
     return;
@@ -75,7 +82,6 @@ function submit() {
       </select>
       <input v-model="form.iconUrl" class="rounded-md border p-2 md:col-span-2" placeholder="Icon URL" />
     </div>
-    <label class="flex items-center gap-2"><input v-model="form.isPublished" type="checkbox" /> Published</label>
     <p v-if="errors.name" class="text-sm text-destructive">{{ errors.name }}</p>
     <div class="flex gap-2">
       <Button type="submit" :disabled="updateMutation.isPending.value">Save</Button>

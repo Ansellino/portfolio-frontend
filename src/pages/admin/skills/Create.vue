@@ -16,7 +16,6 @@ const form = reactive({
   name: '',
   category: 'frontend',
   iconUrl: '',
-  isPublished: true,
 });
 
 const createMutation = useMutation({
@@ -26,11 +25,20 @@ const createMutation = useMutation({
     toast.success('Skill created');
     router.push('/admin/skills');
   },
-  onError: () => toast.error('Failed to create skill'),
+  onError: (error: any) => {
+    const apiMessage = error?.response?.data?.message;
+    const detail = Array.isArray(apiMessage) ? apiMessage.join(', ') : apiMessage;
+    toast.error(detail ? `Failed to create skill: ${detail}` : 'Failed to create skill');
+  },
 });
 
 function submit() {
-  const parsed = skillSchema.safeParse(form);
+  const normalized = {
+    ...form,
+    iconUrl: form.iconUrl?.trim() || undefined,
+  };
+
+  const parsed = skillSchema.safeParse(normalized);
   if (!parsed.success) {
     errors.value = Object.fromEntries(parsed.error.issues.map((issue) => [issue.path.join('.'), issue.message]));
     return;
@@ -55,7 +63,6 @@ function submit() {
       </select>
       <input v-model="form.iconUrl" class="rounded-md border p-2 md:col-span-2" placeholder="Icon URL" />
     </div>
-    <label class="flex items-center gap-2"><input v-model="form.isPublished" type="checkbox" /> Published</label>
     <p v-if="errors.name" class="text-sm text-destructive">{{ errors.name }}</p>
     <div class="flex gap-2">
       <Button type="submit" :disabled="createMutation.isPending.value">Create</Button>

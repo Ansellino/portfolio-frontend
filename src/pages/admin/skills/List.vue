@@ -26,14 +26,6 @@ const listQuery = useQuery({
   queryFn: () => skillsApi.getAllAdmin().then((r) => r.data),
 });
 
-const toggleMutation = useMutation({
-  mutationFn: ({ id, isPublished }: { id: string; isPublished: boolean }) => skillsApi.togglePublish(id, isPublished),
-  onSuccess: () => {
-    qc.invalidateQueries({ queryKey: ['admin-skills'] });
-    toast.success('Skill status updated');
-  },
-});
-
 const deleteMutation = useMutation({
   mutationFn: (id: string) => skillsApi.delete(id),
   onSuccess: () => {
@@ -52,7 +44,6 @@ const columns = computed<ColumnDef<any>[]>(() => [
     cell: ({ row }) =>
       h('div', { class: 'flex items-center gap-2' }, [
         h(Button, { variant: 'outline', size: 'sm', onClick: () => router.push(`/admin/skills/edit/${row.original.id}`) }, { default: () => 'Edit' }),
-        h(Button, { variant: 'outline', size: 'sm', onClick: () => toggleMutation.mutate({ id: row.original.id, isPublished: !row.original.isPublished }) }, { default: () => (row.original.isPublished ? 'Unpublish' : 'Publish') }),
         h(ConfirmDialog, { title: 'Delete skill?', confirmText: 'Delete', onConfirm: () => deleteMutation.mutate(row.original.id) }, { trigger: () => h(Button, { variant: 'destructive', size: 'sm' }, { default: () => 'Delete' }) }),
       ]),
   },
