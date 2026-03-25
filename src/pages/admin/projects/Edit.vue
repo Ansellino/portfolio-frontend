@@ -134,7 +134,7 @@ function submit() {
 			<label class="flex items-center gap-2"><input v-model="form.isPublished" type="checkbox" /> Published</label>
 		</div>
 		<div class="flex gap-2">
-			<Button type="submit" :disabled="updateMutation.isPending">Save</Button>
+			<Button type="submit" :disabled="updateMutation.isPending.value">Save</Button>
 			<Button type="button" variant="outline" @click="router.push('/admin/projects')">Cancel</Button>
 		</div>
 	</form>

@@ -27,7 +27,7 @@ const form = reactive({
   startDate: '',
   endDate: '',
   location: '',
-  employmentType: 'Full-time',
+  employmentType: 'FULL_TIME',
   isPublished: true,
 });
 
@@ -49,7 +49,7 @@ watch(
     form.startDate = data.startDate?.slice?.(0, 10) ?? '';
     form.endDate = data.endDate?.slice?.(0, 10) ?? '';
     form.location = data.location ?? '';
-    form.employmentType = data.employmentType ?? 'Full-time';
+    form.employmentType = data.employmentType ?? 'FULL_TIME';
     form.isPublished = data.isPublished !== false;
     existingLogo.value = data.companyLogoUrl ?? '';
   },
@@ -107,11 +107,11 @@ function submit() {
       <input v-model="form.company" class="rounded-md border p-2" placeholder="Company" />
       <input v-model="form.position" class="rounded-md border p-2" placeholder="Position" />
       <select v-model="form.employmentType" class="rounded-md border p-2">
-        <option>Full-time</option>
-        <option>Part-time</option>
-        <option>Contract</option>
-        <option>Internship</option>
-        <option>Freelance</option>
+        <option value="FULL_TIME">Full-time</option>
+        <option value="PART_TIME">Part-time</option>
+        <option value="CONTRACT">Contract</option>
+        <option value="INTERNSHIP">Internship</option>
+        <option value="FREELANCE">Freelance</option>
       </select>
       <input v-model="form.location" class="rounded-md border p-2" placeholder="Location" />
       <input v-model="form.startDate" type="date" class="rounded-md border p-2" />
@@ -130,7 +130,7 @@ function submit() {
     </div>
     <label class="flex items-center gap-2"><input v-model="form.isPublished" type="checkbox" /> Published</label>
     <div class="flex gap-2">
-      <Button type="submit" :disabled="updateMutation.isPending">Save</Button>
+      <Button type="submit" :disabled="updateMutation.isPending.value">Save</Button>
       <Button type="button" variant="outline" @click="router.push('/admin/experiences')">Cancel</Button>
     </div>
   </form>

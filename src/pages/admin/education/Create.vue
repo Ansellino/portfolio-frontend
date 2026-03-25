@@ -60,7 +60,7 @@ function submit() {
     <label class="flex items-center gap-2"><input v-model="form.isPublished" type="checkbox" /> Published</label>
     <p v-if="errors.institution" class="text-sm text-destructive">{{ errors.institution }}</p>
     <div class="flex gap-2">
-      <Button type="submit" :disabled="createMutation.isPending">Create</Button>
+      <Button type="submit" :disabled="createMutation.isPending.value">Create</Button>
       <Button type="button" variant="outline" @click="router.push('/admin/education')">Cancel</Button>
     </div>
   </form>

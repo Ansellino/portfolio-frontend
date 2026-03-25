@@ -129,7 +129,7 @@ function submit() {
     </div>
     <p v-if="errors.title" class="text-sm text-destructive">{{ errors.title }}</p>
     <div class="flex gap-2">
-      <Button type="submit" :disabled="updateMutation.isPending">Save</Button>
+      <Button type="submit" :disabled="updateMutation.isPending.value">Save</Button>
       <Button type="button" variant="outline" @click="router.push('/admin/blog')">Cancel</Button>
     </div>
   </form>

@@ -22,7 +22,7 @@ const form = reactive({
   startDate: '',
   endDate: '',
   location: '',
-  employmentType: 'Full-time',
+  employmentType: 'FULL_TIME',
   isPublished: true,
 });
 const errors = ref<Record<string, string>>({});
@@ -79,11 +79,11 @@ function submit() {
       <input v-model="form.company" class="rounded-md border p-2" placeholder="Company" />
       <input v-model="form.position" class="rounded-md border p-2" placeholder="Position" />
       <select v-model="form.employmentType" class="rounded-md border p-2">
-        <option>Full-time</option>
-        <option>Part-time</option>
-        <option>Contract</option>
-        <option>Internship</option>
-        <option>Freelance</option>
+        <option value="FULL_TIME">Full-time</option>
+        <option value="PART_TIME">Part-time</option>
+        <option value="CONTRACT">Contract</option>
+        <option value="INTERNSHIP">Internship</option>
+        <option value="FREELANCE">Freelance</option>
       </select>
       <input v-model="form.location" class="rounded-md border p-2" placeholder="Location" />
       <input v-model="form.startDate" type="date" class="rounded-md border p-2" />
@@ -103,7 +103,7 @@ function submit() {
     <p v-if="errors.company" class="text-sm text-destructive">{{ errors.company }}</p>
     <label class="flex items-center gap-2"><input v-model="form.isPublished" type="checkbox" /> Published</label>
     <div class="flex gap-2">
-      <Button type="submit" :disabled="createMutation.isPending">Create</Button>
+      <Button type="submit" :disabled="createMutation.isPending.value">Create</Button>
       <Button type="button" variant="outline" @click="router.push('/admin/experiences')">Cancel</Button>
     </div>
   </form>
