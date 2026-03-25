@@ -414,7 +414,7 @@ export function getMockResponseData(config: InternalAxiosRequestConfig): any | u
     }
   }
 
-  const projectBySlug = path.match(/^\/projects\/([^/]+)$/);
+  const projectBySlug = path.match(/^\/projects\/slug\/([^/]+)$/);
   if (projectBySlug && method === 'get') {
     const slug = projectBySlug[1];
     isUsingMockData.value = true;
@@ -439,7 +439,7 @@ export function getMockResponseData(config: InternalAxiosRequestConfig): any | u
     }
   }
 
-  if (path === '/experience' || path === '/admin/experiences') {
+  if (path === '/experiences' || path === '/admin/experiences') {
     if (method === 'get') {
       const isPublished = normalizeBoolean(params.isPublished);
       const list = isPublished === undefined

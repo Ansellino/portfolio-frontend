@@ -2,7 +2,7 @@ import api from './axios';
 
 export const projectsApi = {
 	getAll: (params?: any) => api.get('/projects', { params }),
-	getBySlug: (slug: string) => api.get(`/projects/${slug}`),
+	getBySlug: (slug: string) => api.get(`/projects/slug/${slug}`),
 	getAllAdmin: (params?: any) => api.get('/admin/projects', { params }),
 	getById: (id: string) => api.get(`/admin/projects/${id}`),
 	create: (dto: any) => api.post('/admin/projects', dto),

@@ -33,7 +33,7 @@ const statsQuery = useQuery({
 			fetchCount('/admin/projects'),
 			fetchCount('/admin/experiences'),
 			fetchCount('/admin/certifications'),
-			fetchCount('/admin/blog-posts'),
+			fetchCount('/admin/blog'),
 			fetchCount('/admin/messages', 'unreadCount'),
 		]);
 
