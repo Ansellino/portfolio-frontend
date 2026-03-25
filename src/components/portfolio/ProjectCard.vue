@@ -16,7 +16,7 @@ defineProps<{
 </script>
 
 <template>
-  <article class="rounded-xl border bg-card p-4 shadow-sm">
+  <article class="flex h-full flex-col rounded-xl border bg-card p-4 shadow-sm">
     <img
       :src="project.thumbnailUrl || 'https://placehold.co/600x360?text=Project'"
       :alt="project.title"
@@ -25,8 +25,10 @@ defineProps<{
     />
     <h3 class="mt-3 text-lg font-semibold">{{ project.title }}</h3>
     <p class="mt-1 line-clamp-2 text-sm text-muted-foreground">{{ project.description }}</p>
-    <SkillBadgeList class="mt-3" :skills="project.skills" />
-    <RouterLink :to="`/projects/${project.slug}`" class="mt-4 inline-block text-sm font-medium text-primary">
+    <div class="mt-3 min-h-8">
+      <SkillBadgeList :skills="project.skills" :max-visible="4" />
+    </div>
+    <RouterLink :to="`/projects/${project.slug}`" class="mt-4 inline-block text-sm font-medium text-primary md:mt-auto">
       {{ detailLabel || 'Open project' }}
     </RouterLink>
   </article>
