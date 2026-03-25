@@ -53,7 +53,7 @@ watch(
 );
 
 const updateMutation = useMutation({
-  mutationFn: (payload: FormData) => certificationsApi.update(id.value, payload),
+  mutationFn: (payload: any) => certificationsApi.update(id.value, payload),
   onSuccess: async () => {
     await qc.invalidateQueries({ queryKey: ['admin-certifications'] });
     toast.success('Certification updated');
@@ -70,16 +70,11 @@ function submit() {
   }
 
   errors.value = {};
-  const payload = new FormData();
-  Object.entries(parsed.data).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      value.forEach((v) => payload.append(key, String(v)));
-      return;
-    }
-    payload.append(key, String(value ?? ''));
-  });
-  payload.append('isPublished', String(form.isPublished));
-  if (imageFile.value) payload.append('image', imageFile.value);
+  const payload = {
+    ...parsed.data,
+    expiryDate: parsed.data.expirationDate || undefined,
+    isPublished: form.isPublished,
+  };
   updateMutation.mutate(payload);
 }
 </script>

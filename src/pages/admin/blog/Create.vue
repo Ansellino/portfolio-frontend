@@ -22,7 +22,7 @@ const form = reactive({
   excerpt: '',
   content: '',
   coverImageUrl: '',
-  category: '',
+  category: 'Guide',
   readingTimeMin: 3,
   isPublished: true,
   publishedAt: '',
@@ -43,7 +43,7 @@ const skillOptions = computed(() => {
 });
 
 const createMutation = useMutation({
-  mutationFn: (payload: FormData) => blogApi.create(payload),
+  mutationFn: (payload: any) => blogApi.create(payload),
   onSuccess: async () => {
     await qc.invalidateQueries({ queryKey: ['admin-blog'] });
     toast.success('Blog post created');
@@ -60,15 +60,15 @@ function submit() {
   }
 
   errors.value = {};
-  const payload = new FormData();
-  Object.entries(parsed.data).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      value.forEach((v) => payload.append(key, String(v)));
-      return;
-    }
-    payload.append(key, String(value ?? ''));
-  });
-  if (coverImageFile.value) payload.append('coverImage', coverImageFile.value);
+  const payload = {
+    title: parsed.data.title,
+    excerpt: parsed.data.excerpt,
+    content: parsed.data.content,
+    category: parsed.data.category,
+    coverImageUrl: parsed.data.coverImageUrl || undefined,
+    isPublished: parsed.data.isPublished,
+    skillIds: parsed.data.tagIds,
+  };
   createMutation.mutate(payload);
 }
 </script>

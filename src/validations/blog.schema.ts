@@ -6,7 +6,9 @@ export const blogSchema = z.object({
   excerpt: z.string().min(1, 'Excerpt is required'),
   content: z.string().min(1, 'Content is required'),
   coverImageUrl: z.string().url().optional().or(z.literal('')),
-  category: z.string().min(1, 'Category is required'),
+  category: z.enum(['Tutorial', 'Guide', 'Opinion', 'Case Study'], {
+    message: 'Category must be one of: Tutorial, Guide, Opinion, Case Study',
+  }),
   readingTimeMin: z.number().int().min(1).default(1),
   isPublished: z.boolean().default(true),
   publishedAt: z.string().optional(),

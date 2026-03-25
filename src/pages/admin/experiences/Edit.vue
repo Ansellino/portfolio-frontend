@@ -57,7 +57,7 @@ watch(
 );
 
 const updateMutation = useMutation({
-  mutationFn: (payload: FormData) => experiencesApi.update(id.value, payload),
+  mutationFn: (payload: any) => experiencesApi.update(id.value, payload),
   onSuccess: async () => {
     await qc.invalidateQueries({ queryKey: ['admin-experiences'] });
     toast.success('Experience updated');
@@ -86,16 +86,10 @@ function submit() {
   }
 
   errors.value = {};
-  const payload = new FormData();
-  Object.entries(parsed.data).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      value.forEach((v) => payload.append(key, String(v)));
-      return;
-    }
-    payload.append(key, String(value ?? ''));
-  });
-  payload.append('isPublished', String(form.isPublished));
-  if (logoFile.value) payload.append('logo', logoFile.value);
+  const payload = {
+    ...parsed.data,
+    isPublished: form.isPublished,
+  };
   updateMutation.mutate(payload);
 }
 </script>

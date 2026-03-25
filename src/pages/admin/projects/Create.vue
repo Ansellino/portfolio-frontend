@@ -45,7 +45,7 @@ const skills = computed(() => {
 });
 
 const createMutation = useMutation({
-	mutationFn: (payload: FormData) => projectsApi.create(payload),
+	mutationFn: (payload: any) => projectsApi.create(payload),
 	onSuccess: async () => {
 		await qc.invalidateQueries({ queryKey: ['admin-projects'] });
 		toast.success('Project created');
@@ -55,6 +55,14 @@ const createMutation = useMutation({
 });
 
 function submit() {
+	const toSlug = (value: string) =>
+		value
+			.toLowerCase()
+			.trim()
+			.replace(/[^a-z0-9\s-]/g, '')
+			.replace(/\s+/g, '-')
+			.replace(/-+/g, '-');
+
 	const parsed = projectSchema.safeParse(form);
 	if (!parsed.success) {
 		errors.value = Object.fromEntries(
@@ -64,15 +72,10 @@ function submit() {
 	}
 
 	errors.value = {};
-	const payload = new FormData();
-	Object.entries(parsed.data).forEach(([key, value]) => {
-		if (Array.isArray(value)) {
-			value.forEach((v) => payload.append(key, String(v)));
-			return;
-		}
-		payload.append(key, String(value ?? ''));
-	});
-	if (thumbnailFile.value) payload.append('thumbnail', thumbnailFile.value);
+	const payload = {
+		...parsed.data,
+		slug: toSlug(parsed.data.title),
+	};
 	createMutation.mutate(payload);
 }
 </script>

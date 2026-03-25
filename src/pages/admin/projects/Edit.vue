@@ -67,14 +67,18 @@ watch(
 		form.endDate = data.endDate?.slice?.(0, 10) ?? '';
 		form.isFeatured = !!data.isFeatured;
 		form.isPublished = data.isPublished !== false;
-		form.skillIds = Array.isArray(data.skills) ? data.skills.map((s: any) => s.id) : data.skillIds ?? [];
+		form.skillIds = Array.isArray(data.skills)
+			? data.skills
+					.map((s: any) => s.skillId ?? s.skill?.id ?? s.id)
+					.filter((id: any) => typeof id === 'string' && id.length > 0)
+			: data.skillIds ?? [];
 		existingThumbnail.value = data.thumbnailUrl ?? '';
 	},
 	{ immediate: true }
 );
 
 const updateMutation = useMutation({
-	mutationFn: (payload: FormData) => projectsApi.update(id.value, payload),
+	mutationFn: (payload: any) => projectsApi.update(id.value, payload),
 	onSuccess: async () => {
 		await qc.invalidateQueries({ queryKey: ['admin-projects'] });
 		await qc.invalidateQueries({ queryKey: ['admin-project', id] });
@@ -92,15 +96,9 @@ function submit() {
 	}
 
 	errors.value = {};
-	const payload = new FormData();
-	Object.entries(parsed.data).forEach(([key, value]) => {
-		if (Array.isArray(value)) {
-			value.forEach((v) => payload.append(key, String(v)));
-			return;
-		}
-		payload.append(key, String(value ?? ''));
-	});
-	if (thumbnailFile.value) payload.append('thumbnail', thumbnailFile.value);
+	const payload = {
+		...parsed.data,
+	};
 	updateMutation.mutate(payload);
 }
 </script>

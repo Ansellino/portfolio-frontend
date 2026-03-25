@@ -25,7 +25,7 @@ const form = reactive({
   excerpt: '',
   content: '',
   coverImageUrl: '',
-  category: '',
+  category: 'Guide',
   readingTimeMin: 3,
   isPublished: true,
   publishedAt: '',
@@ -64,14 +64,18 @@ watch(
     form.readingTimeMin = data.readingTimeMin ?? 3;
     form.isPublished = data.isPublished !== false;
     form.publishedAt = data.publishedAt?.slice?.(0, 10) ?? '';
-    form.tagIds = Array.isArray(data.tags) ? data.tags.map((tag: any) => tag.id) : data.tagIds ?? [];
+    form.tagIds = Array.isArray(data.tags)
+      ? data.tags
+          .map((tag: any) => tag.skillId ?? tag.skill?.id ?? tag.id)
+          .filter((id: any) => typeof id === 'string' && id.length > 0)
+      : data.tagIds ?? [];
     existingCover.value = data.coverImageUrl ?? '';
   },
   { immediate: true }
 );
 
 const updateMutation = useMutation({
-  mutationFn: (payload: FormData) => blogApi.update(id.value, payload),
+  mutationFn: (payload: any) => blogApi.update(id.value, payload),
   onSuccess: async () => {
     await qc.invalidateQueries({ queryKey: ['admin-blog'] });
     toast.success('Blog post updated');
@@ -88,15 +92,15 @@ function submit() {
   }
 
   errors.value = {};
-  const payload = new FormData();
-  Object.entries(parsed.data).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      value.forEach((v) => payload.append(key, String(v)));
-      return;
-    }
-    payload.append(key, String(value ?? ''));
-  });
-  if (coverImageFile.value) payload.append('coverImage', coverImageFile.value);
+  const payload = {
+    title: parsed.data.title,
+    excerpt: parsed.data.excerpt,
+    content: parsed.data.content,
+    category: parsed.data.category,
+    coverImageUrl: parsed.data.coverImageUrl || undefined,
+    isPublished: parsed.data.isPublished,
+    skillIds: parsed.data.tagIds,
+  };
   updateMutation.mutate(payload);
 }
 </script>

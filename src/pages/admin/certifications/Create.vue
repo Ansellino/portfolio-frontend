@@ -27,7 +27,7 @@ const form = reactive({
 });
 
 const createMutation = useMutation({
-  mutationFn: (payload: FormData) => certificationsApi.create(payload),
+  mutationFn: (payload: any) => certificationsApi.create(payload),
   onSuccess: async () => {
     await qc.invalidateQueries({ queryKey: ['admin-certifications'] });
     toast.success('Certification created');
@@ -44,16 +44,11 @@ function submit() {
   }
 
   errors.value = {};
-  const payload = new FormData();
-  Object.entries(parsed.data).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      value.forEach((v) => payload.append(key, String(v)));
-      return;
-    }
-    payload.append(key, String(value ?? ''));
-  });
-  payload.append('isPublished', String(form.isPublished));
-  if (imageFile.value) payload.append('image', imageFile.value);
+  const payload = {
+    ...parsed.data,
+    expiryDate: parsed.data.expirationDate || undefined,
+    isPublished: form.isPublished,
+  };
   createMutation.mutate(payload);
 }
 </script>
