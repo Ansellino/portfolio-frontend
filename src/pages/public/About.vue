@@ -106,10 +106,12 @@ useHead({
 <template>
 	<section class="mx-auto max-w-5xl space-y-8 px-4 py-10">
 		<article class="rounded-xl border bg-card p-6">
-			<h1 class="text-3xl font-bold">About</h1>
-			<p class="mt-3 text-lg font-medium">{{ profile.fullName }}</p>
-			<p class="text-muted-foreground">{{ profile.headline }}</p>
-			<p class="mt-4 leading-relaxed">{{ profile.bio }}</p>
+			<div class="max-w-3xl text-left">
+				<h1 class="text-3xl font-bold">About</h1>
+				<p class="mt-3 text-lg font-medium">{{ profile.fullName }}</p>
+				<p class="text-muted-foreground">{{ profile.headline }}</p>
+				<p class="mt-4 text-justify leading-relaxed">{{ profile.bio }}</p>
+			</div>
 			<Button as-child class="mt-5" variant="secondary"><a href="/resume.pdf" download>Download Resume</a></Button>
 		</article>
 

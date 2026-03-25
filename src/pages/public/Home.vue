@@ -100,10 +100,12 @@ function scrollCarousel(direction: 1 | -1) {
 <template>
 	<section class="mx-auto max-w-6xl space-y-10 px-4 py-10">
 		<div class="rounded-2xl border bg-card p-8 shadow-sm">
-			<p class="text-xs uppercase tracking-[0.25em] text-muted-foreground">Portfolio</p>
-			<h1 class="mt-3 text-4xl font-bold leading-tight md:text-5xl">{{ profile.fullName }}</h1>
-			<p class="mt-3 max-w-2xl text-lg text-muted-foreground">{{ profile.headline }}</p>
-			<p class="mt-2 max-w-2xl text-base text-muted-foreground">{{ profile.bio || 'Focused on modern web products, resilient systems, and practical AI-enabled workflows.' }}</p>
+			<div class="max-w-3xl text-left">
+				<p class="text-xs uppercase tracking-[0.25em] text-muted-foreground">Portfolio</p>
+				<h1 class="mt-3 text-4xl font-bold leading-tight md:text-5xl">{{ profile.fullName }}</h1>
+				<p class="mt-3 text-lg text-muted-foreground">{{ profile.headline }}</p>
+				<p class="mt-3 text-justify leading-relaxed text-muted-foreground">{{ profile.bio || 'Focused on modern web products, resilient systems, and practical AI-enabled workflows.' }}</p>
+			</div>
 			<div class="mt-6 flex flex-wrap gap-3">
 				<Button as-child><RouterLink to="/projects">View Projects</RouterLink></Button>
 				<Button as-child variant="outline"><RouterLink to="/contact">Contact Me</RouterLink></Button>
