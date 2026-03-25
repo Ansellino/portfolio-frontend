@@ -22,12 +22,17 @@ const activeSkill = ref('all');
 
 const projects = computed(() => unwrapList(query.data.value));
 
+function getSkillName(skill: any): string {
+	return String(skill?.name ?? skill?.skill?.name ?? '').trim();
+}
+
 const availableSkills = computed(() => {
 	const map = new Set<string>();
 	for (const project of projects.value) {
 		const skills = Array.isArray(project.skills) ? project.skills : [];
 		for (const skill of skills) {
-			if (skill?.name) map.add(skill.name);
+			const name = getSkillName(skill);
+			if (name) map.add(name);
 		}
 	}
 	return ['all', ...Array.from(map).sort((a, b) => a.localeCompare(b))];
@@ -43,7 +48,8 @@ const filtered = computed(() => {
 
 		const hasSkill =
 			activeSkill.value === 'all' ||
-			(Array.isArray(project.skills) && project.skills.some((skill: any) => skill?.name === activeSkill.value));
+			(Array.isArray(project.skills) &&
+				project.skills.some((skill: any) => getSkillName(skill) === activeSkill.value));
 
 		return inSearch && hasSkill;
 	});
