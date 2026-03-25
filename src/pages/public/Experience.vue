@@ -68,13 +68,25 @@ const query = useQuery({
 	queryFn: () => experiencesApi.getAll({ isPublished: true }).then((r) => r.data),
 });
 
+function toTimestamp(value?: string) {
+	if (!value) return 0;
+	const ts = new Date(value).getTime();
+	return Number.isFinite(ts) ? ts : 0;
+}
+
+const nowTs = Date.now();
+
 const timeline = computed(() => {
 	const items = unwrapList(query.data.value);
 	const data = items.length ? items : fallbackExperiences;
 	return [...data].sort((a, b) => {
-		const aDate = new Date(a.startDate).getTime();
-		const bDate = new Date(b.startDate).getTime();
-		return bDate - aDate;
+		const aEnd = a?.endDate ? toTimestamp(a.endDate) : nowTs;
+		const bEnd = b?.endDate ? toTimestamp(b.endDate) : nowTs;
+		if (bEnd !== aEnd) return bEnd - aEnd;
+
+		const aStart = toTimestamp(a?.startDate);
+		const bStart = toTimestamp(b?.startDate);
+		return bStart - aStart;
 	});
 });
 

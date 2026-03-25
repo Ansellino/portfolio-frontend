@@ -67,10 +67,24 @@ const featuredProjectsQuery = useQuery({
 
 const profile = computed<ProfileData>(() => profileQuery.data.value ?? {});
 
+function toTimestamp(value?: string) {
+	if (!value) return 0;
+	const ts = new Date(value).getTime();
+	return Number.isFinite(ts) ? ts : 0;
+}
+
+const nowTs = Date.now();
+
 const experiences = computed(() =>
-	unwrapList<any>(experienceQuery.data.value).sort(
-		(a, b) => new Date(b.startDate || 0).getTime() - new Date(a.startDate || 0).getTime()
-	)
+	unwrapList<any>(experienceQuery.data.value).sort((a, b) => {
+		const aEnd = a?.endDate ? toTimestamp(a.endDate) : nowTs;
+		const bEnd = b?.endDate ? toTimestamp(b.endDate) : nowTs;
+		if (bEnd !== aEnd) return bEnd - aEnd;
+
+		const aStart = toTimestamp(a?.startDate);
+		const bStart = toTimestamp(b?.startDate);
+		return bStart - aStart;
+	})
 );
 
 const education = computed(() =>

@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import { blogApi } from '@/api/blog.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import SkillBadgeList from '@/components/portfolio/SkillBadgeList.vue';
 import { Button } from '@/components/ui/button';
 import { unwrapList } from '@/utils/unwrapList';
 
@@ -85,7 +86,7 @@ function formatDate(value?: string) {
 		</div>
 
 		<div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-			<article v-for="post in paginatedPosts" :key="post.id" class="rounded-xl border bg-card p-4 shadow-sm">
+			<article v-for="post in paginatedPosts" :key="post.id" class="flex h-full flex-col rounded-xl border bg-card p-4 shadow-sm">
 				<img
 					:src="post.coverImageUrl || 'https://placehold.co/640x360?text=Blog'"
 					:alt="post.title"
@@ -99,12 +100,10 @@ function formatDate(value?: string) {
 				</div>
 				<h2 class="mt-3 text-lg font-semibold">{{ post.title }}</h2>
 				<p class="mt-1 line-clamp-3 text-sm text-muted-foreground">{{ post.excerpt }}</p>
-				<div class="mt-3 flex flex-wrap gap-2">
-					<span v-for="tag in post.tags || []" :key="tag.id || tag.name" class="rounded-full border px-2 py-1 text-xs">
-						#{{ tag.name }}
-					</span>
+				<div class="mt-3 min-h-8">
+					<SkillBadgeList :skills="post.tags" :max-visible="4" prefix="#" />
 				</div>
-				<RouterLink :to="`/blog/${post.slug}`" class="mt-4 inline-block text-sm font-medium text-primary">
+				<RouterLink :to="`/blog/${post.slug}`" class="mt-4 inline-block text-sm font-medium text-primary md:mt-auto">
 					Read article
 				</RouterLink>
 			</article>

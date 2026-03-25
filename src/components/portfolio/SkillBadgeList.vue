@@ -4,6 +4,7 @@ import { computed } from 'vue';
 const props = defineProps<{
   skills?: Array<any>;
   maxVisible?: number;
+  prefix?: string;
 }>();
 
 const normalizedSkills = computed(() => {
@@ -40,7 +41,7 @@ const hiddenSkillsLabel = computed(() => hiddenSkills.value.map((item) => item.n
       :key="skill.id"
       class="rounded-full border px-2 py-1 text-xs"
     >
-      {{ skill.name }}
+      {{ (props.prefix || '') + skill.name }}
     </span>
     <span
       v-if="hiddenSkills.length"

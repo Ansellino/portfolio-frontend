@@ -6,6 +6,7 @@ import { useHead } from '@unhead/vue';
 import { MdCatalog, MdPreview } from 'md-editor-v3';
 import { blogApi } from '@/api/blog.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import SkillBadgeList from '@/components/portfolio/SkillBadgeList.vue';
 import 'md-editor-v3/lib/style.css';
 
 const route = useRoute();
@@ -88,11 +89,7 @@ useHead({
 					<span class="rounded-full border px-2 py-1 text-xs">{{ post.category || 'General' }}</span>
 				</div>
 
-				<div class="flex flex-wrap gap-2">
-					<span v-for="tag in post.tags || []" :key="tag.id || tag.name" class="rounded-full border px-2 py-1 text-xs">
-						#{{ tag.name }}
-					</span>
-				</div>
+				<SkillBadgeList :skills="post.tags" prefix="#" />
 
 				<div class="flex flex-wrap gap-2">
 					<a :href="shareLinkedIn" target="_blank" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-accent">
