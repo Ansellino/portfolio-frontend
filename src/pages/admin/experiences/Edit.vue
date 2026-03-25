@@ -63,7 +63,11 @@ const updateMutation = useMutation({
     toast.success('Experience updated');
     router.push('/admin/experiences');
   },
-  onError: () => toast.error('Failed to update experience'),
+  onError: (error: any) => {
+    const apiMessage = error?.response?.data?.message;
+    const detail = Array.isArray(apiMessage) ? apiMessage.join(', ') : apiMessage;
+    toast.error(detail ? `Failed to update experience: ${detail}` : 'Failed to update experience');
+  },
 });
 
 function addResponsibility() {
@@ -123,7 +127,6 @@ function submit() {
       <input v-model="form.companyLogoUrl" class="rounded-md border p-2 md:col-span-2" placeholder="Logo URL" />
     </div>
     <textarea v-model="form.description" class="min-h-24 w-full rounded-md border p-2" placeholder="Description" />
-    <ImageUploader v-model="logoFile" :preview-url="existingLogo" />
     <div class="space-y-2">
       <p class="text-sm font-medium">Responsibilities</p>
       <div v-for="(_, index) in form.responsibilities" :key="index" class="flex gap-2">
@@ -145,6 +148,7 @@ function submit() {
         Add responsibility
       </button>
     </div>
+    <ImageUploader v-model="logoFile" :preview-url="existingLogo" />
     <label class="flex items-center gap-2"><input v-model="form.isPublished" type="checkbox" /> Published</label>
     <div class="flex gap-2">
       <Button type="submit" :disabled="updateMutation.isPending.value">Save</Button>
