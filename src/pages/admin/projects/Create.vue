@@ -51,7 +51,11 @@ const createMutation = useMutation({
 		toast.success('Project created');
 		router.push('/admin/projects');
 	},
-	onError: () => toast.error('Failed to create project'),
+	onError: (error: any) => {
+		const apiMessage = error?.response?.data?.message;
+		const detail = Array.isArray(apiMessage) ? apiMessage.join(', ') : apiMessage;
+		toast.error(detail ? `Failed to create project: ${detail}` : 'Failed to create project');
+	},
 });
 
 function submit() {
@@ -72,9 +76,20 @@ function submit() {
 	}
 
 	errors.value = {};
+	const cleanOptional = (value?: string) => {
+		if (typeof value !== 'string') return undefined;
+		const trimmed = value.trim();
+		return trimmed.length ? trimmed : undefined;
+	};
+
 	const payload = {
 		...parsed.data,
 		slug: toSlug(parsed.data.title),
+		content: cleanOptional(parsed.data.content),
+		thumbnailUrl: cleanOptional(parsed.data.thumbnailUrl),
+		liveUrl: cleanOptional(parsed.data.liveUrl),
+		githubUrl: cleanOptional(parsed.data.githubUrl),
+		endDate: cleanOptional(parsed.data.endDate),
 	};
 	createMutation.mutate(payload);
 }
@@ -96,14 +111,19 @@ function submit() {
 			<input v-model="form.endDate" type="date" class="w-full rounded-md border p-2" />
 		</div>
 		<label class="block text-sm font-medium">Skills</label>
-		<select
-			multiple
-			class="min-h-28 w-full rounded-md border p-2"
-			:value="form.skillIds"
-			@change="form.skillIds = Array.from(($event.target as HTMLSelectElement).selectedOptions).map((o) => o.value)"
-		>
-			<option v-for="skill in skills" :key="skill.id" :value="skill.id">{{ skill.name }}</option>
-		</select>
+		<div class="rounded-md border p-3">
+			<p class="mb-2 text-xs text-muted-foreground">Pilih satu atau lebih skill untuk project ini.</p>
+			<div class="grid max-h-56 gap-2 overflow-auto pr-1 sm:grid-cols-2">
+				<label
+					v-for="skill in skills"
+					:key="skill.id"
+					class="flex items-center gap-2 rounded border px-2 py-1.5 text-sm"
+				>
+					<input v-model="form.skillIds" type="checkbox" :value="skill.id" />
+					<span>{{ skill.name }}</span>
+				</label>
+			</div>
+		</div>
 		<div class="flex gap-6">
 			<label class="flex items-center gap-2"><input v-model="form.isFeatured" type="checkbox" /> Featured</label>
 			<label class="flex items-center gap-2"><input v-model="form.isPublished" type="checkbox" /> Published</label>
