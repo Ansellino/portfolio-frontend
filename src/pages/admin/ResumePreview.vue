@@ -89,9 +89,9 @@ const experiences = computed(() =>
 
 const education = computed(() =>
 	unwrapList<any>(educationQuery.data.value).sort((a, b) => {
-		const aEnd = a?.endDate ? toTimestamp(a.endDate) : nowTs;
-		const bEnd = b?.endDate ? toTimestamp(b.endDate) : nowTs;
-		if (bEnd !== aEnd) return bEnd - aEnd;
+		const aPrimary = toTimestamp(a?.endDate || a?.startDate);
+		const bPrimary = toTimestamp(b?.endDate || b?.startDate);
+		if (bPrimary !== aPrimary) return bPrimary - aPrimary;
 
 		const aStart = toTimestamp(a?.startDate);
 		const bStart = toTimestamp(b?.startDate);
