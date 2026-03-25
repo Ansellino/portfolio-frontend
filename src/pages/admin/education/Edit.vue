@@ -18,7 +18,7 @@ const form = reactive({
   institution: '',
   degree: '',
   fieldOfStudy: '',
-  grade: '',
+  gpa: '',
   description: '',
   startDate: '',
   endDate: '',
@@ -38,7 +38,7 @@ watch(
     form.institution = data.institution ?? '';
     form.degree = data.degree ?? '';
     form.fieldOfStudy = data.fieldOfStudy ?? '';
-    form.grade = data.grade ?? '';
+    form.gpa = data.gpa == null ? '' : String(data.gpa);
     form.description = data.description ?? '';
     form.startDate = data.startDate?.slice?.(0, 10) ?? '';
     form.endDate = data.endDate?.slice?.(0, 10) ?? '';
@@ -65,7 +65,14 @@ function submit() {
   }
 
   errors.value = {};
-  updateMutation.mutate(parsed.data);
+  const payload = {
+    ...parsed.data,
+    gpa:
+      parsed.data.gpa && parsed.data.gpa.trim().length > 0
+        ? Number(parsed.data.gpa)
+        : undefined,
+  };
+  updateMutation.mutate(payload);
 }
 </script>
 
@@ -76,7 +83,7 @@ function submit() {
       <input v-model="form.institution" class="rounded-md border p-2" placeholder="Institution" />
       <input v-model="form.degree" class="rounded-md border p-2" placeholder="Degree" />
       <input v-model="form.fieldOfStudy" class="rounded-md border p-2" placeholder="Field" />
-      <input v-model="form.grade" class="rounded-md border p-2" placeholder="GPA" />
+      <input v-model="form.gpa" class="rounded-md border p-2" placeholder="GPA (0 - 4)" />
       <input v-model="form.startDate" type="date" class="rounded-md border p-2" />
       <input v-model="form.endDate" type="date" class="rounded-md border p-2" />
       <textarea v-model="form.description" class="min-h-24 rounded-md border p-2 md:col-span-2" placeholder="Description" />

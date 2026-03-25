@@ -41,9 +41,10 @@ async function handleSubmit(values: ContactForm) {
 	showSuccess.value = false;
 	try {
 		await contactApi.sendMessage(values);
+		toast.success('Message sent successfully');
+
 		cooldown.value = true;
 		showSuccess.value = true;
-		toast.success('Message sent successfully');
 
 		form.name = '';
 		form.email = '';

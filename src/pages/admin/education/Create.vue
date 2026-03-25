@@ -16,7 +16,7 @@ const form = reactive({
   institution: '',
   degree: '',
   fieldOfStudy: '',
-  grade: '',
+  gpa: '',
   description: '',
   startDate: '',
   endDate: '',
@@ -41,7 +41,14 @@ function submit() {
   }
 
   errors.value = {};
-  createMutation.mutate(parsed.data);
+  const payload = {
+    ...parsed.data,
+    gpa:
+      parsed.data.gpa && parsed.data.gpa.trim().length > 0
+        ? Number(parsed.data.gpa)
+        : undefined,
+  };
+  createMutation.mutate(payload);
 }
 </script>
 
@@ -52,7 +59,7 @@ function submit() {
       <input v-model="form.institution" class="rounded-md border p-2" placeholder="Institution" />
       <input v-model="form.degree" class="rounded-md border p-2" placeholder="Degree" />
       <input v-model="form.fieldOfStudy" class="rounded-md border p-2" placeholder="Field" />
-      <input v-model="form.grade" class="rounded-md border p-2" placeholder="GPA" />
+      <input v-model="form.gpa" class="rounded-md border p-2" placeholder="GPA (0 - 4)" />
       <input v-model="form.startDate" type="date" class="rounded-md border p-2" />
       <input v-model="form.endDate" type="date" class="rounded-md border p-2" />
       <textarea v-model="form.description" class="min-h-24 rounded-md border p-2 md:col-span-2" placeholder="Description" />

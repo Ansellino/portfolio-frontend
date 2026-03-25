@@ -66,7 +66,7 @@ export interface Education {
   fieldOfStudy?: string;
   startDate: string;
   endDate?: string;
-  grade?: string;
+  gpa?: number;
   description?: string;
 }
 

@@ -53,13 +53,36 @@ const profile = computed(() => {
 const education = computed(() => unwrapList(educationQuery.data.value));
 const skills = computed(() => unwrapList(skillsQuery.data.value));
 
+function formatCategoryLabel(value: string) {
+	return value
+		.replace(/[_-]/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim()
+		.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function formatEducationDate(value?: string) {
+	if (!value) return '';
+	const [dateOnly] = value.split('T');
+	return dateOnly || value;
+}
+
 const skillBuckets = computed(() => {
-	const buckets = new Map<string, number>();
+	const buckets = new Map<string, string[]>();
 	for (const skill of skills.value) {
 		const category = skill.category || 'other';
-		buckets.set(category, (buckets.get(category) ?? 0) + 1);
+		const existing = buckets.get(category) ?? [];
+		existing.push(skill.name || 'Unknown');
+		buckets.set(category, existing);
 	}
-	return Array.from(buckets.entries()).sort((a, b) => b[1] - a[1]);
+
+	return Array.from(buckets.entries())
+		.map(([category, names]) => ({
+			category,
+			names: names.sort((a, b) => a.localeCompare(b)),
+			count: names.length,
+		}))
+		.sort((a, b) => b.count - a.count);
 });
 
 useHead({
@@ -96,7 +119,7 @@ useHead({
 				<li v-for="item in education" :key="item.id" class="rounded-lg border p-4">
 					<p class="font-semibold">{{ item.institution }}</p>
 					<p class="text-sm text-muted-foreground">{{ item.degree }} {{ item.fieldOfStudy ? `· ${item.fieldOfStudy}` : '' }}</p>
-					<p class="text-xs text-muted-foreground">{{ item.startDate }} - {{ item.endDate || 'Present' }}</p>
+					<p class="text-xs text-muted-foreground">{{ formatEducationDate(item.startDate) }} - {{ item.endDate ? formatEducationDate(item.endDate) : 'Present' }}</p>
 				</li>
 			</ul>
 			<p v-if="!education.length" class="mt-4 text-sm text-muted-foreground">BINUS M.S. and RevoU learning tracks available in the full profile dataset.</p>
@@ -104,16 +127,35 @@ useHead({
 
 		<article class="rounded-xl border bg-card p-6">
 			<h2 class="text-xl font-semibold">Skills Visualization</h2>
-			<div class="mt-4 space-y-3">
-				<div v-for="[category, count] in skillBuckets" :key="category" class="space-y-1">
-					<div class="flex items-center justify-between text-sm">
-						<span class="capitalize">{{ category }}</span>
-						<span class="text-muted-foreground">{{ count }}</span>
+			<p class="mt-2 text-sm text-muted-foreground">
+				Tap each category to see detailed skills.
+			</p>
+			<div class="mt-4 grid gap-3 sm:grid-cols-2">
+				<details
+					v-for="bucket in skillBuckets"
+					:key="bucket.category"
+					class="group rounded-lg border bg-background p-3"
+				>
+					<summary class="cursor-pointer list-none space-y-2">
+						<div class="flex items-center justify-between text-sm">
+							<span class="font-medium">{{ formatCategoryLabel(bucket.category) }}</span>
+							<span class="text-muted-foreground">{{ bucket.count }}</span>
+						</div>
+						<div class="h-2 rounded-full bg-muted">
+							<div class="h-2 rounded-full bg-primary" :style="{ width: `${Math.min(100, bucket.count * 12)}%` }" />
+						</div>
+						<p class="text-xs text-muted-foreground group-open:hidden">Show skills</p>
+					</summary>
+					<div class="mt-3 flex flex-wrap gap-2">
+						<span
+							v-for="name in bucket.names"
+							:key="`${bucket.category}-${name}`"
+							class="rounded-full border bg-card px-2 py-1 text-xs"
+						>
+							{{ name }}
+						</span>
 					</div>
-					<div class="h-2 rounded-full bg-muted">
-						<div class="h-2 rounded-full bg-primary" :style="{ width: `${Math.min(100, count * 12)}%` }" />
-					</div>
-				</div>
+				</details>
 			</div>
 		</article>
 	</section>
