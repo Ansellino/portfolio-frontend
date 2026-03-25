@@ -74,15 +74,13 @@ function toTimestamp(value?: string) {
 	return Number.isFinite(ts) ? ts : 0;
 }
 
-const nowTs = Date.now();
-
 const timeline = computed(() => {
 	const items = unwrapList(query.data.value);
 	const data = items.length ? items : fallbackExperiences;
 	return [...data].sort((a, b) => {
-		const aEnd = a?.endDate ? toTimestamp(a.endDate) : nowTs;
-		const bEnd = b?.endDate ? toTimestamp(b.endDate) : nowTs;
-		if (bEnd !== aEnd) return bEnd - aEnd;
+		const aPrimary = toTimestamp(a?.endDate || a?.startDate);
+		const bPrimary = toTimestamp(b?.endDate || b?.startDate);
+		if (bPrimary !== aPrimary) return bPrimary - aPrimary;
 
 		const aStart = toTimestamp(a?.startDate);
 		const bStart = toTimestamp(b?.startDate);

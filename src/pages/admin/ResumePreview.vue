@@ -73,13 +73,15 @@ function toTimestamp(value?: string) {
 	return Number.isFinite(ts) ? ts : 0;
 }
 
-const nowTs = Date.now();
+function getLatestDateTimestamp(item: any) {
+	return toTimestamp(item?.endDate || item?.startDate);
+}
 
 const experiences = computed(() =>
 	unwrapList<any>(experienceQuery.data.value).sort((a, b) => {
-		const aEnd = a?.endDate ? toTimestamp(a.endDate) : nowTs;
-		const bEnd = b?.endDate ? toTimestamp(b.endDate) : nowTs;
-		if (bEnd !== aEnd) return bEnd - aEnd;
+		const aPrimary = getLatestDateTimestamp(a);
+		const bPrimary = getLatestDateTimestamp(b);
+		if (bPrimary !== aPrimary) return bPrimary - aPrimary;
 
 		const aStart = toTimestamp(a?.startDate);
 		const bStart = toTimestamp(b?.startDate);
@@ -89,8 +91,8 @@ const experiences = computed(() =>
 
 const education = computed(() =>
 	unwrapList<any>(educationQuery.data.value).sort((a, b) => {
-		const aPrimary = toTimestamp(a?.endDate || a?.startDate);
-		const bPrimary = toTimestamp(b?.endDate || b?.startDate);
+		const aPrimary = getLatestDateTimestamp(a);
+		const bPrimary = getLatestDateTimestamp(b);
 		if (bPrimary !== aPrimary) return bPrimary - aPrimary;
 
 		const aStart = toTimestamp(a?.startDate);
