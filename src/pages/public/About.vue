@@ -119,6 +119,7 @@ useHead({
 				<li v-for="item in education" :key="item.id" class="rounded-lg border p-4">
 					<p class="font-semibold">{{ item.institution }}</p>
 					<p class="text-sm text-muted-foreground">{{ item.degree }} {{ item.fieldOfStudy ? `· ${item.fieldOfStudy}` : '' }}</p>
+					<p v-if="item.gpa !== undefined && item.gpa !== null" class="text-xs text-muted-foreground">GPA: {{ item.gpa }}</p>
 					<p class="text-xs text-muted-foreground">{{ formatEducationDate(item.startDate) }} - {{ item.endDate ? formatEducationDate(item.endDate) : 'Present' }}</p>
 				</li>
 			</ul>

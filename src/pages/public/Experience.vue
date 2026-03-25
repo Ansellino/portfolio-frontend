@@ -20,6 +20,10 @@ const fallbackExperiences = [
 		location: 'Indonesia',
 		employmentType: 'Program',
 		description: 'Facilitated cloud learning journey and project-based upskilling cohorts.',
+		responsibilities: [
+			'Mentored participants through hands-on cloud labs and weekly checkpoints.',
+			'Guided capstone project planning and delivery for learning cohorts.',
+		],
 	},
 	{
 		id: 'tokocrypto-2025',
@@ -30,6 +34,10 @@ const fallbackExperiences = [
 		location: 'Jakarta',
 		employmentType: 'Contract',
 		description: 'Performed market and product analysis to support business decisions.',
+		responsibilities: [
+			'Prepared market trend reports and competitor analysis for product stakeholders.',
+			'Supported decision-making with structured data insights and recommendations.',
+		],
 	},
 	{
 		id: 'umngrove-2024',
@@ -40,6 +48,10 @@ const fallbackExperiences = [
 		location: 'Tangerang',
 		employmentType: 'Part-time',
 		description: 'Built and maintained product features for startup incubation initiatives.',
+		responsibilities: [
+			'Developed and maintained product features in collaboration with cross-functional teams.',
+			'Improved reliability through bug fixes, testing, and code quality reviews.',
+		],
 	},
 ];
 
@@ -71,6 +83,21 @@ function fmt(value?: string) {
 	const d = new Date(value);
 	return d.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
+
+function getResponsibilities(item: any): string[] {
+	if (Array.isArray(item?.responsibilities)) {
+		return item.responsibilities.filter((value: unknown) => typeof value === 'string' && value.trim().length > 0);
+	}
+
+	if (typeof item?.responsible === 'string' && item.responsible.trim().length > 0) {
+		return item.responsible
+			.split(/\r?\n|;/)
+			.map((value: string) => value.trim())
+			.filter((value: string) => value.length > 0);
+	}
+
+	return [];
+}
 </script>
 
 <template>
@@ -83,6 +110,14 @@ function fmt(value?: string) {
 				<h2 class="mt-1 text-lg font-semibold">{{ item.position }} · {{ item.company }}</h2>
 				<p class="mt-1 text-sm text-muted-foreground">{{ item.location }} · {{ item.employmentType }}</p>
 				<p class="mt-3 text-sm">{{ item.description }}</p>
+				<div v-if="getResponsibilities(item).length" class="mt-3">
+					<p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Responsibilities</p>
+					<ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
+						<li v-for="(responsibility, index) in getResponsibilities(item)" :key="`${item.id}-responsibility-${index}`">
+							{{ responsibility }}
+						</li>
+					</ul>
+				</div>
 			</article>
 		</div>
 	</section>

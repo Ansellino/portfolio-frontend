@@ -7,6 +7,7 @@ import { projectsApi } from '@/api/projects.api';
 import { blogApi } from '@/api/blog.api';
 import { certificationsApi } from '@/api/certification.api';
 import { experiencesApi } from '@/api/experience.api';
+import { profileApi } from '@/api/profile.api';
 import { usePageSeo } from '@/composables/usePageSeo';
 import SectionHeader from '@/components/portfolio/SectionHeader.vue';
 import ProjectCard from '@/components/portfolio/ProjectCard.vue';
@@ -58,9 +59,22 @@ const experiencesQuery = useQuery({
 	queryFn: () => experiencesApi.getAll({ isPublished: true }).then((r) => r.data),
 });
 
+const profileQuery = useQuery({
+	queryKey: ['home-public-profile'],
+	queryFn: () => profileApi.getPublic().then((r) => r.data),
+});
+
 const featuredProjects = computed(() => unwrapList(featuredQuery.data.value));
 const latestPosts = computed(() => unwrapList(postsQuery.data.value).slice(0, 3));
 const certsCount = computed(() => unwrapList(certificationsQuery.data.value).length);
+const profile = computed(() => {
+	const data = profileQuery.data.value?.data ?? profileQuery.data.value;
+	if (data) return data;
+	return {
+		fullName: 'Jeremy Ansellino Gunawan',
+		headline: 'Software Engineer focused on modern web products, resilient systems, and practical AI-enabled workflows.',
+	};
+});
 
 const experienceYears = computed(() => {
 	const experiences = unwrapList(experiencesQuery.data.value);
@@ -86,8 +100,8 @@ function scrollCarousel(direction: 1 | -1) {
 	<section class="mx-auto max-w-6xl space-y-10 px-4 py-10">
 		<div class="rounded-2xl border bg-card p-8 shadow-sm">
 			<p class="text-xs uppercase tracking-[0.25em] text-muted-foreground">Portfolio</p>
-			<h1 class="mt-3 text-4xl font-bold leading-tight md:text-5xl">Jeremy Ansellino Gunawan</h1>
-			<p class="mt-3 max-w-2xl text-lg text-muted-foreground">Software Engineer focused on modern web products, resilient systems, and practical AI-enabled workflows.</p>
+			<h1 class="mt-3 text-4xl font-bold leading-tight md:text-5xl">{{ profile.fullName }}</h1>
+			<p class="mt-3 max-w-2xl text-lg text-muted-foreground">{{ profile.headline }}</p>
 			<div class="mt-6 flex flex-wrap gap-3">
 				<Button as-child><RouterLink to="/projects">View Projects</RouterLink></Button>
 				<Button as-child variant="outline"><RouterLink to="/contact">Contact Me</RouterLink></Button>

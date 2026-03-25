@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { certificationsApi } from '@/api/certification.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import { Button } from '@/components/ui/button';
 
 usePageSeo({
 	title: 'Certifications',
@@ -60,6 +61,12 @@ const grouped = computed(() => {
 					<span class="inline-flex rounded-full border px-2 py-1 text-xs font-medium">{{ category }}</span>
 					<h3 class="mt-3 text-base font-semibold">{{ cert.name }}</h3>
 					<p class="mt-1 text-sm text-muted-foreground">{{ cert.issuer }}</p>
+					<div class="mt-4" v-if="cert.credentialUrl">
+						<Button as-child size="sm" variant="outline">
+							<a :href="cert.credentialUrl" target="_blank" rel="noopener noreferrer">Lihat Sertifikat</a>
+						</Button>
+					</div>
+					<p v-else class="mt-4 text-xs text-muted-foreground">Credential URL belum tersedia.</p>
 				</article>
 			</div>
 		</section>
