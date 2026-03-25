@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/vue-query';
 import { LogOut, Menu, X } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import api from '@/api/axios';
+import { isUsingMockData } from '@/mocks/mockBackend';
 import { useAuthStore } from '@/stores/auth.store';
 
 type NavItem = {
@@ -187,6 +188,12 @@ async function handleLogout() {
           </template>
         </nav>
         <h2 class="text-2xl font-semibold tracking-tight">{{ pageTitle }}</h2>
+        <p
+          v-if="isUsingMockData"
+          class="mt-2 inline-flex rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700"
+        >
+          Using Dummy Data
+        </p>
       </header>
 
       <main class="p-6">
