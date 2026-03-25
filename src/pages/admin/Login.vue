@@ -9,8 +9,6 @@ import { useToast } from '@/composables/useToast';
 const router = useRouter();
 const auth = useAuthStore();
 const toast = useToast();
-const dummyEmail = import.meta.env.VITE_ADMIN_DUMMY_EMAIL || 'admin@example.com';
-const dummyPassword = import.meta.env.VITE_ADMIN_DUMMY_PASSWORD || 'admin12345';
 
 const formSchema = z.object({
 	email: z.string().email('Please enter a valid email'),
