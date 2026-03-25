@@ -11,7 +11,9 @@ export default defineConfig(({ command }) => {
   // The prerender plugin depends on an old Puppeteer Chromium build
   // that fails in Vercel's Linux image (missing shared libs like libnss3).
   // Keep prerender for local builds, skip it on Vercel/CI deployments.
-  const shouldPrerender = command === 'build' && !process.env.VERCEL;
+  const isVercel = Boolean(process.env.VERCEL) || Boolean(process.env.VERCEL_ENV);
+  const isCi = process.env.CI === 'true' || process.env.CI === '1';
+  const shouldPrerender = command === 'build' && !isVercel && !isCi;
 
   return {
     plugins: [
