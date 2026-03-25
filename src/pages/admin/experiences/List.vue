@@ -1,0 +1,71 @@
+<script setup lang="ts">
+import { computed, h } from 'vue';
+import { useRouter } from 'vue-router';
+import type { ColumnDef } from '@tanstack/vue-table';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query';
+import DataTable from '@/components/admin/DataTable.vue';
+import ConfirmDialog from '@/components/admin/ConfirmDialog.vue';
+import { Button } from '@/components/ui/button';
+import { experiencesApi } from '@/api/experience.api';
+import { useToast } from '@/composables/useToast';
+
+const router = useRouter();
+const qc = useQueryClient();
+const toast = useToast();
+
+function unwrapList(payload: any): any[] {
+  const body = payload?.data ?? payload;
+  if (Array.isArray(body)) return body;
+  if (Array.isArray(body?.items)) return body.items;
+  if (Array.isArray(body?.data)) return body.data;
+  return [];
+}
+
+const listQuery = useQuery({
+  queryKey: ['admin-experiences'],
+  queryFn: () => experiencesApi.getAllAdmin().then((r) => r.data),
+});
+
+const toggleMutation = useMutation({
+  mutationFn: ({ id, isPublished }: { id: string; isPublished: boolean }) => experiencesApi.togglePublish(id, isPublished),
+  onSuccess: () => {
+    qc.invalidateQueries({ queryKey: ['admin-experiences'] });
+    toast.success('Experience status updated');
+  },
+});
+
+const deleteMutation = useMutation({
+  mutationFn: (id: string) => experiencesApi.delete(id),
+  onSuccess: () => {
+    qc.invalidateQueries({ queryKey: ['admin-experiences'] });
+    toast.success('Experience deleted');
+  },
+});
+
+const rows = computed(() => unwrapList(listQuery.data.value));
+const columns = computed<ColumnDef<any>[]>(() => [
+  { accessorKey: 'company', header: 'Company' },
+  { accessorKey: 'position', header: 'Position' },
+  { accessorKey: 'employmentType', header: 'Type' },
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) =>
+      h('div', { class: 'flex items-center gap-2' }, [
+        h(Button, { variant: 'outline', size: 'sm', onClick: () => router.push(`/admin/experiences/edit/${row.original.id}`) }, { default: () => 'Edit' }),
+        h(Button, { variant: 'outline', size: 'sm', onClick: () => toggleMutation.mutate({ id: row.original.id, isPublished: !row.original.isPublished }) }, { default: () => (row.original.isPublished ? 'Unpublish' : 'Publish') }),
+        h(ConfirmDialog, { title: 'Delete experience?', confirmText: 'Delete', onConfirm: () => deleteMutation.mutate(row.original.id) }, { trigger: () => h(Button, { variant: 'destructive', size: 'sm' }, { default: () => 'Delete' }) }),
+      ]),
+  },
+]);
+</script>
+
+<template>
+  <section class="space-y-4">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-semibold">Experiences</h1>
+      <Button @click="router.push('/admin/experiences/create')">Create Experience</Button>
+    </div>
+    <DataTable :columns="columns" :data="rows" search-key="company" search-placeholder="Search experiences..." />
+  </section>
+</template>
