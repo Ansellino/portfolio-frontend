@@ -173,7 +173,7 @@ function printResume() {
 							</div>
 							<p v-if="item.description" class="mt-2 text-sm leading-relaxed">{{ item.description }}</p>
 							<ul v-if="getResponsibilities(item).length" class="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-muted-foreground">
-								<li v-for="(responsibility, index) in getResponsibilities(item)" :key="`${item.id}-responsibility-${index}`">
+								<li v-for="(responsibility, index) in getResponsibilities(item)" :key="`${item.id}-responsibility-${index}`" class="text-justify">
 									{{ responsibility }}
 								</li>
 							</ul>
