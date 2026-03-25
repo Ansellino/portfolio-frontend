@@ -88,9 +88,15 @@ const experiences = computed(() =>
 );
 
 const education = computed(() =>
-	unwrapList<any>(educationQuery.data.value).sort(
-		(a, b) => new Date(b.startDate || 0).getTime() - new Date(a.startDate || 0).getTime()
-	)
+	unwrapList<any>(educationQuery.data.value).sort((a, b) => {
+		const aEnd = a?.endDate ? toTimestamp(a.endDate) : nowTs;
+		const bEnd = b?.endDate ? toTimestamp(b.endDate) : nowTs;
+		if (bEnd !== aEnd) return bEnd - aEnd;
+
+		const aStart = toTimestamp(a?.startDate);
+		const bStart = toTimestamp(b?.startDate);
+		return bStart - aStart;
+	})
 );
 
 const certifications = computed(() => unwrapList<any>(certificationsQuery.data.value).slice(0, 8));
