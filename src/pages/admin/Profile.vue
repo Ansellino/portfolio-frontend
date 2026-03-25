@@ -14,6 +14,7 @@ type ProfilePayload = {
 	bio?: string;
 	location?: string;
 	avatarUrl?: string;
+	resumeUrl?: string;
 	email?: string;
 	phone?: string;
 	website?: string;
@@ -44,9 +45,30 @@ function assignForm(data: Partial<ProfilePayload>) {
 	form.avatarUrl = data.avatarUrl || '';
 	form.email = data.email || '';
 	form.phone = data.phone || '';
-	form.website = data.website || '';
+	form.website = data.website || data.resumeUrl || '';
 	form.githubUrl = data.githubUrl || '';
 	form.linkedinUrl = data.linkedinUrl || '';
+}
+
+function cleanOptional(value?: string) {
+	if (value == null) return undefined;
+	const trimmed = value.trim();
+	return trimmed.length ? trimmed : undefined;
+}
+
+function toApiPayload(payload: ProfilePayload) {
+	return {
+		fullName: payload.fullName.trim(),
+		headline: cleanOptional(payload.headline),
+		bio: cleanOptional(payload.bio),
+		location: cleanOptional(payload.location),
+		avatarUrl: cleanOptional(payload.avatarUrl),
+		resumeUrl: cleanOptional(payload.website),
+		email: cleanOptional(payload.email),
+		phone: cleanOptional(payload.phone),
+		githubUrl: cleanOptional(payload.githubUrl),
+		linkedinUrl: cleanOptional(payload.linkedinUrl),
+	};
 }
 
 const profileQuery = useQuery({
@@ -77,11 +99,12 @@ watch(
 
 const saveMutation = useMutation({
 	mutationFn: async (payload: ProfilePayload) => {
+		const apiPayload = toApiPayload(payload);
 		try {
-			const { data } = await api.patch('/admin/profile', payload);
+			const { data } = await api.patch('/admin/profile', apiPayload);
 			return data;
 		} catch {
-			const { data } = await api.patch('/profile', payload);
+			const { data } = await api.patch('/profile', apiPayload);
 			return data;
 		}
 	},

@@ -18,6 +18,7 @@ type ProfileData = {
 	email?: string;
 	phone?: string;
 	website?: string;
+	resumeUrl?: string;
 	githubUrl?: string;
 	linkedinUrl?: string;
 };
@@ -133,7 +134,7 @@ function printResume() {
 					<span v-if="profile.location">{{ profile.location }}</span>
 					<span v-if="profile.email">{{ profile.email }}</span>
 					<span v-if="profile.phone">{{ profile.phone }}</span>
-					<a v-if="profile.website" :href="profile.website" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Website</a>
+					<a v-if="profile.website || profile.resumeUrl" :href="profile.website || profile.resumeUrl" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Website</a>
 					<a v-if="profile.githubUrl" :href="profile.githubUrl" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">GitHub</a>
 					<a v-if="profile.linkedinUrl" :href="profile.linkedinUrl" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">LinkedIn</a>
 				</div>
