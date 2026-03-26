@@ -53,7 +53,9 @@ onBeforeUnmount(() => {
 <template>
   <header class="sticky top-0 z-30 border-b bg-background/90 backdrop-blur">
     <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-      <RouterLink to="/" class="text-sm font-semibold tracking-wide">JAG</RouterLink>
+      <RouterLink to="/" class="flex items-center" aria-label="Home">
+        <img src="/logo.png" alt="Logo" class="h-8 w-auto" />
+      </RouterLink>
 
       <ul class="hidden items-center gap-5 md:flex">
         <li v-for="item in navItems" :key="item.to">
