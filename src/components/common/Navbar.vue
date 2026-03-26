@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
     >
       <div
         v-if="mobileOpen"
-        class="fixed inset-0 z-20 bg-black/25 md:hidden"
+        class="fixed inset-0 z-20 bg-black/30 md:hidden"
         @click="mobileOpen = false"
       />
     </Transition>
@@ -112,16 +112,16 @@ onBeforeUnmount(() => {
       leave-from-class="translate-y-0 opacity-100"
       leave-to-class="-translate-y-2 opacity-0"
     >
-      <div v-if="mobileOpen" class="relative z-30 border-t border-border bg-white shadow-none md:hidden">
+      <div v-if="mobileOpen" class="relative z-30 border-t bg-background/95 shadow-md md:hidden backdrop-blur">
         <ul class="mx-auto max-w-6xl space-y-1 px-4 py-3">
           <li v-for="item in navItems" :key="item.to">
             <RouterLink
               :to="item.to"
               :class="[
-                'block rounded-md px-3 py-2 text-sm transition-colors',
+                'block rounded-md px-3 py-2 text-sm font-semibold transition-colors',
                 isActive(item.to)
                   ? 'bg-primary text-primary-foreground font-semibold'
-                  : 'text-foreground hover:bg-accent hover:text-foreground',
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
               ]"
             >
               {{ item.label }}
