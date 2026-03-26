@@ -52,9 +52,9 @@ onBeforeUnmount(() => {
 
 <template>
   <header class="sticky top-0 z-30 border-b bg-background/90 backdrop-blur">
-    <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5 sm:py-3">
       <RouterLink to="/" class="flex items-center" aria-label="Home">
-        <img src="/logo.png" alt="Logo" class="h-8 w-auto" />
+        <img src="/logo.png" alt="Logo" class="h-7 w-auto sm:h-8" />
       </RouterLink>
 
       <ul class="hidden items-center gap-5 md:flex">
@@ -77,7 +77,7 @@ onBeforeUnmount(() => {
           type="button"
           variant="outline"
           size="icon"
-          class="md:hidden"
+          class="h-9 w-9 md:hidden"
           aria-label="Toggle menu"
           @click="mobileOpen = !mobileOpen"
         >
@@ -111,11 +111,11 @@ onBeforeUnmount(() => {
       leave-to-class="-translate-y-2 opacity-0"
     >
       <div v-if="mobileOpen" class="relative z-30 border-t bg-background/95 shadow-md md:hidden backdrop-blur">
-        <ul class="mx-auto max-w-6xl space-y-1 px-4 py-3">
+        <ul class="mx-auto max-w-6xl space-y-1.5 px-4 py-3">
           <li v-for="item in navItems" :key="item.to">
             <RouterLink
               :to="item.to"
-              class="block rounded-md px-3 py-2 text-sm transition-colors"
+              class="block rounded-md px-3 py-2.5 text-sm transition-colors"
               :class="isActive(item.to)
                 ? 'bg-primary text-primary-foreground font-semibold'
                 : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'"

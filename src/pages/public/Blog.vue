@@ -70,26 +70,26 @@ function formatDate(value?: string) {
 </script>
 
 <template>
-	<section class="mx-auto max-w-6xl space-y-6 px-4 py-10">
+	<section class="mx-auto max-w-6xl space-y-5 px-4 py-8 sm:space-y-6 sm:py-10">
 		<BackendWaitingNotice
 			v-if="isWaitingBackend"
 			description="Data artikel akan muncul otomatis saat koneksi berhasil."
 		/>
 
 		<div class="space-y-2">
-			<h1 class="text-3xl font-bold">Blog</h1>
+			<h1 class="text-2xl font-bold sm:text-3xl">Blog</h1>
 			<p class="text-muted-foreground">Tutorials, guides, opinions, and case studies.</p>
 		</div>
 
 		<div class="grid gap-3 md:grid-cols-[2fr_1fr]">
 			<input
 				v-model="search"
-				class="w-full rounded-md border bg-background px-3 py-2"
+				class="w-full rounded-md border bg-background px-3 py-2.5"
 				placeholder="Search articles..."
 			/>
 			<select
 				:value="activeCategory"
-				class="w-full rounded-md border bg-background px-3 py-2"
+				class="w-full rounded-md border bg-background px-3 py-2.5"
 				@change="setCategory(($event.target as HTMLSelectElement).value as Category)"
 			>
 				<option v-for="category in categories" :key="category" :value="category">
@@ -98,25 +98,25 @@ function formatDate(value?: string) {
 			</select>
 		</div>
 
-		<div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+		<div class="grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
 			<article v-for="post in paginatedPosts" :key="post.id" class="flex h-full flex-col rounded-xl border bg-card p-4 shadow-sm">
 				<img
 					:src="post.coverImageUrl || 'https://placehold.co/640x360?text=Blog'"
 					:alt="post.title"
 					loading="lazy"
-					class="h-44 w-full rounded-md object-cover"
+					class="h-40 w-full rounded-md object-cover sm:h-44"
 				/>
 				<div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-					<span class="rounded-full border px-2 py-1">{{ post.category || 'General' }}</span>
+					<span class="rounded-full border px-2.5 py-1.5 leading-none">{{ post.category || 'General' }}</span>
 					<span>{{ post.readingTimeMin || 3 }} min read</span>
 					<span>{{ formatDate(post.publishedAt) }}</span>
 				</div>
-				<h2 class="mt-3 text-lg font-semibold">{{ post.title }}</h2>
-				<p class="mt-1 line-clamp-3 text-sm text-muted-foreground">{{ post.excerpt }}</p>
+				<h2 class="mt-3 line-clamp-2 min-h-[3.5rem] text-lg font-semibold">{{ post.title }}</h2>
+				<p class="mt-1 line-clamp-3 min-h-[3.75rem] text-sm text-muted-foreground">{{ post.excerpt }}</p>
 				<div class="mt-3 min-h-8">
 					<SkillBadgeList :skills="post.tags" :max-visible="4" prefix="#" />
 				</div>
-				<RouterLink :to="`/blog/${post.slug}`" class="mt-4 inline-block text-sm font-medium text-primary md:mt-auto">
+				<RouterLink :to="`/blog/${post.slug}`" class="mt-4 inline-flex text-sm font-medium text-primary md:mt-auto">
 					Read article
 				</RouterLink>
 			</article>
@@ -129,10 +129,12 @@ function formatDate(value?: string) {
 				:key="p"
 				size="sm"
 				:variant="p === page ? 'default' : 'outline'"
+				class="hidden sm:inline-flex"
 				@click="page = p"
 			>
 				{{ p }}
 			</Button>
+			<span class="text-xs text-muted-foreground sm:hidden">Page {{ page }} / {{ totalPages }}</span>
 			<Button variant="outline" size="sm" :disabled="page >= totalPages" @click="page += 1">Next</Button>
 		</div>
 	</section>

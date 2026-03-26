@@ -152,13 +152,13 @@ function scrollCarousel(direction: 1 | -1) {
 </script>
 
 <template>
-	<section class="mx-auto max-w-6xl space-y-10 px-4 py-10">
+	<section class="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:space-y-10 sm:py-10">
 		<BackendWaitingNotice
 			v-if="isWaitingBackend"
 			description="Konten homepage akan muncul otomatis saat koneksi berhasil."
 		/>
 
-		<div class="rounded-2xl border bg-card p-8 shadow-sm">
+		<div class="rounded-2xl border bg-card p-5 shadow-sm sm:p-8">
 			<div class="grid items-start gap-6 md:grid-cols-[120px_1fr]">
 				<div class="mx-auto md:mx-0">
 					<img
@@ -177,12 +177,12 @@ function scrollCarousel(direction: 1 | -1) {
 				</div>
 				<div class="max-w-3xl text-left">
 				<p class="text-xs uppercase tracking-[0.25em] text-muted-foreground">Portfolio</p>
-				<h1 class="mt-3 text-4xl font-bold leading-tight md:text-5xl">{{ profile.fullName }}</h1>
+				<h1 class="mt-3 text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">{{ profile.fullName }}</h1>
 				<p class="mt-3 text-lg text-muted-foreground">{{ profile.headline }}</p>
 				<p class="mt-3 text-justify leading-relaxed text-muted-foreground">{{ profile.bio || 'Focused on modern web products, resilient systems, and practical AI-enabled workflows.' }}</p>
 			</div>
 			</div>
-			<div class="mt-6 flex flex-wrap gap-3">
+			<div class="mt-6 grid gap-3 sm:flex sm:flex-wrap">
 				<Button as-child><RouterLink to="/projects">View Projects</RouterLink></Button>
 				<Button as-child variant="outline"><RouterLink to="/contact">Contact Me</RouterLink></Button>
 				<Button as-child variant="secondary"><a href="/resume.pdf" download>Download Resume</a></Button>
@@ -203,7 +203,7 @@ function scrollCarousel(direction: 1 | -1) {
 		</div>
 
 			<section class="space-y-4">
-			<div class="flex items-center justify-between">
+			<div class="flex flex-wrap items-center justify-between gap-2">
 					<SectionHeader title="Featured Projects" />
 				<div class="flex gap-2">
 					<Button variant="outline" size="sm" @click="scrollCarousel(-1)">Prev</Button>
@@ -211,7 +211,7 @@ function scrollCarousel(direction: 1 | -1) {
 				</div>
 			</div>
 			<div ref="carouselRef" class="flex snap-x gap-4 overflow-x-auto pb-2">
-					<div v-for="project in featuredProjects" :key="project.id" class="min-w-[300px] snap-start">
+					<div v-for="project in featuredProjects" :key="project.id" class="min-w-[260px] snap-start sm:min-w-[300px]">
 						<ProjectCard :project="project" detail-label="View details" />
 					</div>
 			</div>

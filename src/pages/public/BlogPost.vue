@@ -78,7 +78,7 @@ useHead({
 </script>
 
 <template>
-	<section class="mx-auto grid max-w-6xl gap-8 px-4 py-10 lg:grid-cols-[1fr_280px]">
+	<section class="mx-auto grid max-w-6xl gap-6 px-4 py-8 sm:gap-8 sm:py-10 lg:grid-cols-[1fr_280px]">
 		<article class="space-y-5">
 			<RouterLink to="/blog" class="text-sm font-medium text-primary">Back to blog</RouterLink>
 
@@ -92,9 +92,9 @@ useHead({
 					:src="post.coverImageUrl || 'https://placehold.co/920x460?text=Article'"
 					:alt="post.title"
 					loading="lazy"
-					class="h-64 w-full rounded-xl border object-cover"
+					class="h-52 w-full rounded-xl border object-cover sm:h-64"
 				/>
-				<h1 class="text-3xl font-bold leading-tight">{{ post.title }}</h1>
+				<h1 class="text-2xl font-bold leading-tight sm:text-3xl">{{ post.title }}</h1>
 				<div class="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
 					<span>{{ formatDate(post.publishedAt) }}</span>
 					<span>{{ post.readingTimeMin || 3 }} min read</span>
@@ -103,16 +103,16 @@ useHead({
 
 				<SkillBadgeList :skills="post.tags" prefix="#" />
 
-				<div class="flex flex-wrap gap-2">
-					<a :href="shareLinkedIn" target="_blank" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-accent">
+				<div class="grid gap-2 sm:flex sm:flex-wrap">
+					<a :href="shareLinkedIn" target="_blank" class="rounded-md border px-3 py-2 text-center text-sm font-medium hover:bg-accent">
 						Share on LinkedIn
 					</a>
-					<a :href="shareTwitter" target="_blank" class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-accent">
+					<a :href="shareTwitter" target="_blank" class="rounded-md border px-3 py-2 text-center text-sm font-medium hover:bg-accent">
 						Share on Twitter
 					</a>
 				</div>
 
-				<div class="rounded-xl border p-4">
+				<div class="article-content rounded-xl border p-4">
 					<MdPreview :editor-id="previewId" :model-value="post.content || ''" />
 				</div>
 			</div>
@@ -120,9 +120,18 @@ useHead({
 			<p v-else class="text-muted-foreground">Loading article...</p>
 		</article>
 
-		<aside class="space-y-3 rounded-xl border bg-card p-4 lg:sticky lg:top-20 lg:h-fit">
+		<aside class="hidden space-y-3 rounded-xl border bg-card p-4 lg:sticky lg:top-20 lg:block lg:h-fit">
 			<p class="text-sm font-semibold">Table of contents</p>
 			<MdCatalog :editor-id="previewId" :scroll-element="scrollElement" />
 		</aside>
 	</section>
 </template>
+
+<style scoped>
+.article-content :deep(pre),
+.article-content :deep(table) {
+	overflow-x: auto;
+	max-width: 100%;
+	display: block;
+}
+</style>

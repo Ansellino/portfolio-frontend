@@ -112,8 +112,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<section class="mx-auto max-w-2xl space-y-6 px-4 py-10">
-		<h1 class="text-3xl font-bold">Contact</h1>
+	<section class="mx-auto max-w-2xl space-y-5 px-4 py-8 sm:space-y-6 sm:py-10">
+		<h1 class="text-2xl font-bold sm:text-3xl">Contact</h1>
 		<p class="text-muted-foreground">Have a project, collaboration idea, or opportunity? Send a message.</p>
 
 		<BackendWaitingNotice
@@ -142,7 +142,7 @@ onBeforeUnmount(() => {
 				<textarea v-model="form.message" class="min-h-36 w-full rounded-md border bg-background px-3 py-2" placeholder="Message" />
 				<p v-if="errors.message" class="mt-1 text-xs text-destructive">{{ errors.message }}</p>
 			</div>
-			<div class="flex items-center gap-3">
+			<div class="flex flex-wrap items-center gap-3">
 				<Button type="submit" :disabled="!canSubmit">{{ cooldown ? `Wait ${cooldownSeconds}s` : (isSubmitting ? 'Sending...' : 'Send Message') }}</Button>
 				<p v-if="cooldown" class="text-xs text-muted-foreground">Cooldown active. You can submit again in {{ cooldownSeconds }}s.</p>
 			</div>

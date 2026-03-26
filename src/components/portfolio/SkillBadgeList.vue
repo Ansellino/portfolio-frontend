@@ -39,13 +39,13 @@ const hiddenSkillsLabel = computed(() => hiddenSkills.value.map((item) => item.n
     <span
       v-for="skill in visibleSkills"
       :key="skill.id"
-      class="rounded-full border px-2 py-1 text-xs"
+      class="rounded-full border px-2.5 py-1.5 text-[11px] leading-none sm:text-xs"
     >
       {{ (props.prefix || '') + skill.name }}
     </span>
     <span
       v-if="hiddenSkills.length"
-      class="rounded-full border border-dashed px-2 py-1 text-xs text-muted-foreground"
+      class="rounded-full border border-dashed px-2.5 py-1.5 text-[11px] leading-none text-muted-foreground sm:text-xs"
       :title="hiddenSkillsLabel"
     >
       +{{ hiddenSkills.length }}

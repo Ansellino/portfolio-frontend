@@ -65,14 +65,14 @@ const filtered = computed(() => {
 </script>
 
 <template>
-	<section class="mx-auto max-w-6xl space-y-6 px-4 py-10">
+	<section class="mx-auto max-w-6xl space-y-5 px-4 py-8 sm:space-y-6 sm:py-10">
 		<BackendWaitingNotice
 			v-if="isWaitingBackend"
 			description="Data project akan muncul otomatis saat koneksi berhasil."
 		/>
 
 		<div class="space-y-2">
-			<h1 class="text-3xl font-bold">Projects</h1>
+			<h1 class="text-2xl font-bold sm:text-3xl">Projects</h1>
 			<p class="text-muted-foreground">Search and filter by skill to explore the project catalog.</p>
 		</div>
 
@@ -89,7 +89,7 @@ const filtered = computed(() => {
 			</select>
 		</div>
 
-			<div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+			<div class="grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
 				<ProjectCard v-for="project in filtered" :key="project.id" :project="project" />
 			</div>
 	</section>

@@ -117,3 +117,40 @@ Endpoint utama yang digunakan:
 - Data tidak muncul: cek `VITE_API_BASE_URL` dan CORS backend.
 - Selalu logout otomatis: cek endpoint refresh token dan secret JWT backend.
 - Build gagal: pastikan versi Node sesuai engines di `package.json`.
+
+## Mobile QA Checklist
+
+Gunakan checklist ini setiap selesai perubahan UI agar responsivitas tetap aman.
+
+Viewport minimum yang perlu diuji:
+
+- `360x800` (Android kecil)
+- `390x844` (iPhone 12/13/14)
+- `768x1024` (tablet portrait)
+
+Halaman yang wajib dicek:
+
+- Home (`/`)
+- Projects (`/projects`) dan detail (`/projects/:slug`)
+- Blog (`/blog`) dan detail (`/blog/:slug`)
+- Experience (`/experience`)
+- Certifications (`/certifications`)
+- About (`/about`)
+- Contact (`/contact`)
+
+Poin validasi cepat:
+
+- Tidak ada horizontal scroll tidak sengaja.
+- Heading/teks tidak terpotong dan tetap terbaca.
+- Tombol/CTA utama mudah ditap (tidak terlalu kecil/rapat).
+- Navbar mobile bisa buka/tutup dengan rapi (termasuk overlay).
+- Card list tetap rapi saat konten judul/deskripsi panjang.
+- Konten markdown (code block/table) tidak meluber; bisa scroll horizontal jika perlu.
+- Pagination/filter/search tetap usable di layar kecil.
+
+Langkah uji singkat:
+
+1. Jalankan `npm run dev`.
+2. Buka DevTools mode device toolbar.
+3. Uji viewport di atas untuk semua halaman wajib.
+4. Ulangi cek setelah merge perubahan layout besar.

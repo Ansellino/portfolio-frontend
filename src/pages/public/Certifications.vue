@@ -59,24 +59,24 @@ const grouped = computed(() => {
 </script>
 
 <template>
-	<section class="mx-auto max-w-6xl space-y-8 px-4 py-10">
+	<section class="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:space-y-8 sm:py-10">
 		<BackendWaitingNotice
 			v-if="isWaitingBackend"
 			description="Data certifications akan muncul otomatis saat koneksi berhasil."
 		/>
 
-		<h1 class="text-3xl font-bold">Certifications</h1>
+		<h1 class="text-2xl font-bold sm:text-3xl">Certifications</h1>
 
 		<section v-for="[category, certs] in grouped" :key="category" class="space-y-3">
 			<h2 class="text-xl font-semibold">{{ category }}</h2>
-			<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+			<div class="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
 				<article v-for="cert in certs" :key="cert.id" class="rounded-xl border bg-card p-4">
 					<span class="inline-flex rounded-full border px-2 py-1 text-xs font-medium">{{ category }}</span>
 					<h3 class="mt-3 text-base font-semibold">{{ cert.name }}</h3>
 					<p class="mt-1 text-sm text-muted-foreground">{{ cert.issuer }}</p>
 					<div class="mt-4" v-if="cert.credentialUrl">
 						<Button as-child size="sm" variant="outline">
-							<a :href="cert.credentialUrl" target="_blank" rel="noopener noreferrer">Lihat Sertifikat</a>
+							<a :href="cert.credentialUrl" target="_blank" rel="noopener noreferrer" class="w-full text-center">Lihat Sertifikat</a>
 						</Button>
 					</div>
 					<p v-else class="mt-4 text-xs text-muted-foreground">Credential URL belum tersedia.</p>

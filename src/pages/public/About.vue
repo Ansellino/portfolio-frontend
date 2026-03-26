@@ -148,7 +148,7 @@ useHead({
 </script>
 
 <template>
-	<section class="mx-auto max-w-5xl space-y-8 px-4 py-10">
+	<section class="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:space-y-8 sm:py-10">
 		<BackendWaitingNotice
 			v-if="isWaitingBackend"
 			description="Data profile, education, dan skills akan muncul otomatis saat koneksi berhasil."
@@ -156,7 +156,7 @@ useHead({
 
 		<article class="rounded-xl border bg-card p-6">
 			<div class="text-left">
-				<h1 class="text-3xl font-bold">About</h1>
+				<h1 class="text-2xl font-bold sm:text-3xl">About</h1>
 				<p class="mt-3 text-lg font-medium">{{ profile.fullName }}</p>
 				<p class="text-muted-foreground">{{ profile.headline }}</p>
 				<p class="mt-4 text-justify leading-relaxed">{{ profile.bio }}</p>
