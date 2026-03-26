@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { projectsApi } from '@/api/projects.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import BackendWaitingNotice from '@/components/portfolio/BackendWaitingNotice.vue';
 import ProjectCard from '@/components/portfolio/ProjectCard.vue';
 import { unwrapList } from '@/utils/unwrapList';
 
@@ -15,7 +16,14 @@ usePageSeo({
 const query = useQuery({
 	queryKey: ['public-projects'],
 	queryFn: () => projectsApi.getAll({ isPublished: true }).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
+
+const isWaitingBackend = computed(
+	() => !query.data.value && (query.isFetching.value || query.isError.value)
+);
 
 const search = ref('');
 const activeSkill = ref('all');
@@ -58,6 +66,11 @@ const filtered = computed(() => {
 
 <template>
 	<section class="mx-auto max-w-6xl space-y-6 px-4 py-10">
+		<BackendWaitingNotice
+			v-if="isWaitingBackend"
+			description="Data project akan muncul otomatis saat koneksi berhasil."
+		/>
+
 		<div class="space-y-2">
 			<h1 class="text-3xl font-bold">Projects</h1>
 			<p class="text-muted-foreground">Search and filter by skill to explore the project catalog.</p>

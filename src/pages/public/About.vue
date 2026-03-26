@@ -6,6 +6,7 @@ import { profileApi } from '@/api/profile.api';
 import { educationApi } from '@/api/education.api';
 import { skillsApi } from '@/api/skills.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import BackendWaitingNotice from '@/components/portfolio/BackendWaitingNotice.vue';
 import { Button } from '@/components/ui/button';
 
 const siteUrl = (import.meta.env.VITE_SITE_URL || 'https://example.com').replace(/\/$/, '');
@@ -27,16 +28,43 @@ function unwrapList(payload: any): any[] {
 const profileQuery = useQuery({
 	queryKey: ['public-profile'],
 	queryFn: () => profileApi.getPublic().then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
 
 const educationQuery = useQuery({
 	queryKey: ['public-education'],
 	queryFn: () => educationApi.getAll({ isPublished: true }).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
 
 const skillsQuery = useQuery({
 	queryKey: ['public-skills'],
 	queryFn: () => skillsApi.getAll({ isPublished: true }).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
+});
+
+const isWaitingBackend = computed(() => {
+	const hasData =
+		!!profileQuery.data.value ||
+		!!educationQuery.data.value ||
+		!!skillsQuery.data.value;
+
+	if (hasData) return false;
+
+	return (
+		profileQuery.isFetching.value ||
+		educationQuery.isFetching.value ||
+		skillsQuery.isFetching.value ||
+		profileQuery.isError.value ||
+		educationQuery.isError.value ||
+		skillsQuery.isError.value
+	);
 });
 
 const profile = computed(() => {
@@ -121,6 +149,11 @@ useHead({
 
 <template>
 	<section class="mx-auto max-w-5xl space-y-8 px-4 py-10">
+		<BackendWaitingNotice
+			v-if="isWaitingBackend"
+			description="Data profile, education, dan skills akan muncul otomatis saat koneksi berhasil."
+		/>
+
 		<article class="rounded-xl border bg-card p-6">
 			<div class="max-w-3xl text-left">
 				<h1 class="text-3xl font-bold">About</h1>

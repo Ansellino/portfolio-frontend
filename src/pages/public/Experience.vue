@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { experiencesApi } from '@/api/experience.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import BackendWaitingNotice from '@/components/portfolio/BackendWaitingNotice.vue';
 
 usePageSeo({
 	title: 'Experience',
@@ -66,7 +67,16 @@ function unwrapList(payload: any): any[] {
 const query = useQuery({
 	queryKey: ['public-experience'],
 	queryFn: () => experiencesApi.getAll({ isPublished: true }).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
+
+const fetchedExperiences = computed(() => unwrapList(query.data.value));
+
+const isWaitingBackend = computed(
+	() => !query.data.value && (query.isFetching.value || query.isError.value)
+);
 
 function toTimestamp(value?: string) {
 	if (!value) return 0;
@@ -75,8 +85,11 @@ function toTimestamp(value?: string) {
 }
 
 const timeline = computed(() => {
-	const items = unwrapList(query.data.value);
-	const data = items.length ? items : fallbackExperiences;
+	const data = fetchedExperiences.value.length
+		? fetchedExperiences.value
+		: isWaitingBackend.value
+			? []
+			: fallbackExperiences;
 	return [...data].sort((a, b) => {
 		const aPrimary = toTimestamp(a?.endDate || a?.startDate);
 		const bPrimary = toTimestamp(b?.endDate || b?.startDate);
@@ -124,6 +137,11 @@ function getResponsibilities(item: any): string[] {
 		<header class="space-y-2">
 			<h1 class="text-2xl font-bold sm:text-3xl">Work Experience</h1>
 		</header>
+
+		<BackendWaitingNotice
+			v-if="isWaitingBackend"
+			description="Data experience akan muncul otomatis saat koneksi berhasil."
+		/>
 
 		<div class="relative pl-8 sm:pl-10">
 			<div class="absolute bottom-0 left-[11px] top-0 w-px bg-border sm:left-[15px]" />

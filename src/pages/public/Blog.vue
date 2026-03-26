@@ -4,6 +4,7 @@ import { RouterLink } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import { blogApi } from '@/api/blog.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import BackendWaitingNotice from '@/components/portfolio/BackendWaitingNotice.vue';
 import SkillBadgeList from '@/components/portfolio/SkillBadgeList.vue';
 import { Button } from '@/components/ui/button';
 import { unwrapList } from '@/utils/unwrapList';
@@ -25,7 +26,14 @@ const perPage = 6;
 const postsQuery = useQuery({
 	queryKey: ['public-blog-list'],
 	queryFn: () => blogApi.getAll({ isPublished: true }).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
+
+const isWaitingBackend = computed(
+	() => !postsQuery.data.value && (postsQuery.isFetching.value || postsQuery.isError.value)
+);
 
 const posts = computed(() => unwrapList<any>(postsQuery.data.value));
 
@@ -63,6 +71,11 @@ function formatDate(value?: string) {
 
 <template>
 	<section class="mx-auto max-w-6xl space-y-6 px-4 py-10">
+		<BackendWaitingNotice
+			v-if="isWaitingBackend"
+			description="Data artikel akan muncul otomatis saat koneksi berhasil."
+		/>
+
 		<div class="space-y-2">
 			<h1 class="text-3xl font-bold">Blog</h1>
 			<p class="text-muted-foreground">Tutorials, guides, opinions, and case studies.</p>

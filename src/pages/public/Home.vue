@@ -8,6 +8,7 @@ import { blogApi } from '@/api/blog.api';
 import { experiencesApi } from '@/api/experience.api';
 import { profileApi } from '@/api/profile.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import BackendWaitingNotice from '@/components/portfolio/BackendWaitingNotice.vue';
 import SectionHeader from '@/components/portfolio/SectionHeader.vue';
 import ProjectCard from '@/components/portfolio/ProjectCard.vue';
 import { Button } from '@/components/ui/button';
@@ -41,26 +42,65 @@ useHead({
 const featuredQuery = useQuery({
 	queryKey: ['home-featured-projects'],
 	queryFn: () => projectsApi.getAll({ isFeatured: true, isPublished: true, limit: 10 }).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
 
 const postsQuery = useQuery({
 	queryKey: ['home-latest-posts'],
 	queryFn: () => blogApi.getAll({ isPublished: true, limit: 3 }).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
 
 const postsCountQuery = useQuery({
 	queryKey: ['home-published-posts-count'],
 	queryFn: () => blogApi.getAll({ isPublished: true }).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
 
 const experiencesQuery = useQuery({
 	queryKey: ['home-experience-years'],
 	queryFn: () => experiencesApi.getAll({ isPublished: true }).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
 
 const profileQuery = useQuery({
 	queryKey: ['home-public-profile'],
 	queryFn: () => profileApi.getPublic().then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
+});
+
+const isWaitingBackend = computed(() => {
+	const hasData =
+		!!featuredQuery.data.value ||
+		!!postsQuery.data.value ||
+		!!postsCountQuery.data.value ||
+		!!experiencesQuery.data.value ||
+		!!profileQuery.data.value;
+
+	if (hasData) return false;
+
+	return (
+		featuredQuery.isFetching.value ||
+		postsQuery.isFetching.value ||
+		postsCountQuery.isFetching.value ||
+		experiencesQuery.isFetching.value ||
+		profileQuery.isFetching.value ||
+		featuredQuery.isError.value ||
+		postsQuery.isError.value ||
+		postsCountQuery.isError.value ||
+		experiencesQuery.isError.value ||
+		profileQuery.isError.value
+	);
 });
 
 const featuredProjects = computed(() => unwrapList(featuredQuery.data.value));
@@ -104,6 +144,11 @@ function scrollCarousel(direction: 1 | -1) {
 
 <template>
 	<section class="mx-auto max-w-6xl space-y-10 px-4 py-10">
+		<BackendWaitingNotice
+			v-if="isWaitingBackend"
+			description="Konten homepage akan muncul otomatis saat koneksi berhasil."
+		/>
+
 		<div class="rounded-2xl border bg-card p-8 shadow-sm">
 			<div class="max-w-3xl text-left">
 				<p class="text-xs uppercase tracking-[0.25em] text-muted-foreground">Portfolio</p>
