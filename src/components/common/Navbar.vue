@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
     >
       <div
         v-if="mobileOpen"
-        class="fixed inset-0 z-20 bg-black/30 md:hidden"
+        class="fixed inset-0 z-20 bg-white/35 md:hidden"
         @click="mobileOpen = false"
       />
     </Transition>
