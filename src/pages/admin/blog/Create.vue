@@ -49,7 +49,11 @@ const createMutation = useMutation({
     toast.success('Blog post created');
     router.push('/admin/blog');
   },
-  onError: () => toast.error('Failed to create blog post'),
+  onError: (error: any) => {
+    const apiMessage = error?.response?.data?.message;
+    const detail = Array.isArray(apiMessage) ? apiMessage.join(', ') : apiMessage;
+    toast.error(detail ? `Failed to create blog post: ${detail}` : 'Failed to create blog post');
+  },
 });
 
 function submit() {

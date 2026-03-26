@@ -80,7 +80,11 @@ const updateMutation = useMutation({
     toast.success('Blog post updated');
     router.push('/admin/blog');
   },
-  onError: () => toast.error('Failed to update blog post'),
+  onError: (error: any) => {
+    const apiMessage = error?.response?.data?.message;
+    const detail = Array.isArray(apiMessage) ? apiMessage.join(', ') : apiMessage;
+    toast.error(detail ? `Failed to update blog post: ${detail}` : 'Failed to update blog post');
+  },
 });
 
 function submit() {
