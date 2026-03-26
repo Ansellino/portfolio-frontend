@@ -41,7 +41,7 @@ const filteredPosts = computed(() => {
 	const q = search.value.trim().toLowerCase();
 	return posts.value.filter((post) => {
 		const categoryOk = activeCategory.value === 'all' || post.category === activeCategory.value;
-		const text = `${post.title || ''} ${post.excerpt || ''} ${post.content || ''}`.toLowerCase();
+		const text = `${post.title || ''} ${post.excerpt || ''}`.toLowerCase();
 		const searchOk = !q || text.includes(q);
 		return categoryOk && searchOk;
 	});
