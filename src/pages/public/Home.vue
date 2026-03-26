@@ -131,7 +131,16 @@ const profile = computed(() => {
 		fullName: 'Jeremy Ansellino Gunawan',
 		headline: 'Software Engineer',
 		bio: 'Focused on modern web products, resilient systems, and practical AI-enabled workflows.',
+		avatarUrl: '',
 	};
+});
+
+const profileInitials = computed(() => {
+	const name = String(profile.value?.fullName || '').trim();
+	if (!name) return 'JG';
+	const parts = name.split(/\s+/).filter(Boolean);
+	if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+	return `${parts[0][0] ?? ''}${parts[parts.length - 1][0] ?? ''}`.toUpperCase();
 });
 
 const carouselRef = ref<HTMLElement | null>(null);
@@ -150,11 +159,28 @@ function scrollCarousel(direction: 1 | -1) {
 		/>
 
 		<div class="rounded-2xl border bg-card p-8 shadow-sm">
-			<div class="max-w-3xl text-left">
+			<div class="grid items-start gap-6 md:grid-cols-[120px_1fr]">
+				<div class="mx-auto md:mx-0">
+					<img
+						v-if="profile.avatarUrl"
+						:src="profile.avatarUrl"
+						:alt="`${profile.fullName} avatar`"
+						class="h-24 w-24 rounded-full border object-cover"
+						loading="lazy"
+					/>
+					<div
+						v-else
+						class="flex h-24 w-24 items-center justify-center rounded-full border bg-muted text-xl font-semibold text-muted-foreground"
+					>
+						{{ profileInitials }}
+					</div>
+				</div>
+				<div class="max-w-3xl text-left">
 				<p class="text-xs uppercase tracking-[0.25em] text-muted-foreground">Portfolio</p>
 				<h1 class="mt-3 text-4xl font-bold leading-tight md:text-5xl">{{ profile.fullName }}</h1>
 				<p class="mt-3 text-lg text-muted-foreground">{{ profile.headline }}</p>
 				<p class="mt-3 text-justify leading-relaxed text-muted-foreground">{{ profile.bio || 'Focused on modern web products, resilient systems, and practical AI-enabled workflows.' }}</p>
+			</div>
 			</div>
 			<div class="mt-6 flex flex-wrap gap-3">
 				<Button as-child><RouterLink to="/projects">View Projects</RouterLink></Button>
