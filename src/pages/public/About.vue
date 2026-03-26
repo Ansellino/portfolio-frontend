@@ -155,7 +155,7 @@ useHead({
 		/>
 
 		<article class="rounded-xl border bg-card p-6">
-			<div class="max-w-3xl text-left">
+			<div class="text-left">
 				<h1 class="text-3xl font-bold">About</h1>
 				<p class="mt-3 text-lg font-medium">{{ profile.fullName }}</p>
 				<p class="text-muted-foreground">{{ profile.headline }}</p>
