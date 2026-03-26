@@ -78,14 +78,18 @@ function submit() {
     <h1 class="text-2xl font-semibold">Write Post</h1>
     <div class="grid gap-3 md:grid-cols-2">
       <input v-model="form.title" class="rounded-md border p-2" placeholder="Title" />
+      <p v-if="errors.title" class="text-sm text-destructive md:col-span-2">{{ errors.title }}</p>
       <select v-model="form.category" class="rounded-md border p-2">
         <option v-for="category in blogCategories" :key="category" :value="category">{{ category }}</option>
       </select>
       <input v-model.number="form.readingTimeMin" type="number" min="1" class="rounded-md border p-2" placeholder="Reading time" />
       <input v-model="form.coverImageUrl" class="rounded-md border p-2 md:col-span-2" placeholder="Cover Image URL" />
+      <p v-if="errors.coverImageUrl" class="text-sm text-destructive md:col-span-2">{{ errors.coverImageUrl }}</p>
     </div>
     <textarea v-model="form.excerpt" class="min-h-24 w-full rounded-md border p-2" placeholder="Excerpt" />
+    <p v-if="errors.excerpt" class="text-sm text-destructive">{{ errors.excerpt }}</p>
     <MarkdownEditor v-model="form.content" title="Content" />
+    <p v-if="errors.content" class="text-sm text-destructive">{{ errors.content }}</p>
     <ImageUploader v-model="coverImageFile" />
     <label class="block text-sm font-medium">Tags (Skills)</label>
     <div class="rounded-md border p-3">
@@ -105,7 +109,6 @@ function submit() {
       <label class="flex items-center gap-2"><input v-model="form.isPublished" type="checkbox" /> Published</label>
       <label class="flex items-center gap-2">Published At <input v-model="form.publishedAt" type="date" class="rounded-md border p-2" /></label>
     </div>
-    <p v-if="errors.title" class="text-sm text-destructive">{{ errors.title }}</p>
     <div class="flex gap-2">
       <Button type="submit" :disabled="createMutation.isPending.value">Create</Button>
       <Button type="button" variant="outline" @click="router.push('/admin/blog')">Cancel</Button>
