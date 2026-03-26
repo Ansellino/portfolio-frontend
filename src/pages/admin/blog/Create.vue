@@ -18,7 +18,6 @@ const errors = ref<Record<string, string>>({});
 
 const form = reactive({
   title: '',
-  slug: '',
   excerpt: '',
   content: '',
   coverImageUrl: '',
@@ -78,7 +77,6 @@ function submit() {
     <h1 class="text-2xl font-semibold">Write Post</h1>
     <div class="grid gap-3 md:grid-cols-2">
       <input v-model="form.title" class="rounded-md border p-2" placeholder="Title" />
-      <input v-model="form.slug" class="rounded-md border p-2" placeholder="Slug" />
       <input v-model="form.category" class="rounded-md border p-2" placeholder="Category" />
       <input v-model.number="form.readingTimeMin" type="number" min="1" class="rounded-md border p-2" placeholder="Reading time" />
       <input v-model="form.coverImageUrl" class="rounded-md border p-2 md:col-span-2" placeholder="Cover Image URL" />
@@ -87,14 +85,19 @@ function submit() {
     <MarkdownEditor v-model="form.content" title="Content" />
     <ImageUploader v-model="coverImageFile" />
     <label class="block text-sm font-medium">Tags (Skills)</label>
-    <select
-      multiple
-      class="min-h-28 w-full rounded-md border p-2"
-      :value="form.tagIds"
-      @change="form.tagIds = Array.from(($event.target as HTMLSelectElement).selectedOptions).map((o) => o.value)"
-    >
-      <option v-for="skill in skillOptions" :key="skill.id" :value="skill.id">{{ skill.name }}</option>
-    </select>
+    <div class="rounded-md border p-3">
+      <p class="mb-2 text-xs text-muted-foreground">Pilih satu atau lebih skill untuk dijadikan tag artikel.</p>
+      <div class="grid max-h-56 gap-2 overflow-auto pr-1 sm:grid-cols-2">
+        <label
+          v-for="skill in skillOptions"
+          :key="skill.id"
+          class="flex items-center gap-2 rounded border px-2 py-1.5 text-sm"
+        >
+          <input v-model="form.tagIds" type="checkbox" :value="skill.id" />
+          <span>{{ skill.name }}</span>
+        </label>
+      </div>
+    </div>
     <div class="flex gap-6">
       <label class="flex items-center gap-2"><input v-model="form.isPublished" type="checkbox" /> Published</label>
       <label class="flex items-center gap-2">Published At <input v-model="form.publishedAt" type="date" class="rounded-md border p-2" /></label>
