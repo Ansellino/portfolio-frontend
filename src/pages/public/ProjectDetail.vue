@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/vue-query';
 import { MdPreview } from 'md-editor-v3';
 import { projectsApi } from '@/api/projects.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import BackendWaitingNotice from '@/components/portfolio/BackendWaitingNotice.vue';
 import SkillBadgeList from '@/components/portfolio/SkillBadgeList.vue';
 import 'md-editor-v3/lib/style.css';
 
@@ -14,9 +15,15 @@ const slug = computed(() => String(route.params.slug || ''));
 const projectQuery = useQuery({
 	queryKey: ['public-project', slug],
 	queryFn: () => projectsApi.getBySlug(slug.value).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
 
 const project = computed(() => projectQuery.data.value?.data ?? projectQuery.data.value);
+const isWaitingBackend = computed(
+	() => !projectQuery.data.value && (projectQuery.isFetching.value || projectQuery.isError.value)
+);
 
 usePageSeo({
   title: () => project.value?.title || 'Project',
@@ -29,6 +36,12 @@ usePageSeo({
 <template>
 	<section class="mx-auto max-w-4xl space-y-6 px-4 py-10">
 		<RouterLink to="/projects" class="text-sm font-medium text-primary">Back to projects</RouterLink>
+
+		<BackendWaitingNotice
+			v-if="isWaitingBackend"
+			description="Detail project akan muncul otomatis saat koneksi berhasil."
+		/>
+
 		<article v-if="project" class="space-y-5">
 			<img
 				:src="project.thumbnailUrl || 'https://placehold.co/800x420?text=Project'"

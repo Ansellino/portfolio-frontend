@@ -6,6 +6,7 @@ import { useHead } from '@unhead/vue';
 import { MdCatalog, MdPreview } from 'md-editor-v3';
 import { blogApi } from '@/api/blog.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import BackendWaitingNotice from '@/components/portfolio/BackendWaitingNotice.vue';
 import SkillBadgeList from '@/components/portfolio/SkillBadgeList.vue';
 import 'md-editor-v3/lib/style.css';
 
@@ -17,9 +18,15 @@ const scrollElement = typeof document !== 'undefined' ? document.documentElement
 const postQuery = useQuery({
 	queryKey: ['public-blog-post', slug],
 	queryFn: () => blogApi.getBySlug(slug.value).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
 
 const post = computed(() => postQuery.data.value?.data ?? postQuery.data.value);
+const isWaitingBackend = computed(
+	() => !postQuery.data.value && (postQuery.isFetching.value || postQuery.isError.value)
+);
 
 usePageSeo({
 	title: () => post.value?.title || 'Blog Post',
@@ -74,6 +81,11 @@ useHead({
 	<section class="mx-auto grid max-w-6xl gap-8 px-4 py-10 lg:grid-cols-[1fr_280px]">
 		<article class="space-y-5">
 			<RouterLink to="/blog" class="text-sm font-medium text-primary">Back to blog</RouterLink>
+
+			<BackendWaitingNotice
+				v-if="isWaitingBackend"
+				description="Konten artikel akan muncul otomatis saat koneksi berhasil."
+			/>
 
 			<div v-if="post" class="space-y-4">
 				<img

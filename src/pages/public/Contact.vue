@@ -1,8 +1,11 @@
 ﻿<script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref } from 'vue';
+import { useQuery } from '@tanstack/vue-query';
 import { contactSchema } from '@/validations/contact.schema';
 import { contactApi } from '@/api/contact.api';
+import { profileApi } from '@/api/profile.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import BackendWaitingNotice from '@/components/portfolio/BackendWaitingNotice.vue';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/composables/useToast';
 
@@ -36,7 +39,19 @@ const isSubmitting = ref(false);
 let cooldownTimeout: number | null = null;
 let cooldownInterval: number | null = null;
 
-const canSubmit = computed(() => !cooldown.value && !isSubmitting.value);
+const backendReadyQuery = useQuery({
+	queryKey: ['public-contact-backend-ready'],
+	queryFn: () => profileApi.getPublic().then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
+});
+
+const isWaitingBackend = computed(
+	() => !backendReadyQuery.data.value && (backendReadyQuery.isFetching.value || backendReadyQuery.isError.value)
+);
+
+const canSubmit = computed(() => !cooldown.value && !isSubmitting.value && !isWaitingBackend.value);
 
 async function handleSubmit(values: ContactForm) {
 	isSubmitting.value = true;
@@ -100,6 +115,11 @@ onBeforeUnmount(() => {
 	<section class="mx-auto max-w-2xl space-y-6 px-4 py-10">
 		<h1 class="text-3xl font-bold">Contact</h1>
 		<p class="text-muted-foreground">Have a project, collaboration idea, or opportunity? Send a message.</p>
+
+		<BackendWaitingNotice
+			v-if="isWaitingBackend"
+			description="Form contact akan aktif otomatis saat koneksi backend berhasil."
+		/>
 
 		<form class="space-y-4 rounded-xl border bg-card p-6" @submit.prevent="submit">
 			<p v-if="showSuccess" class="rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
