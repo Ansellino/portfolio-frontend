@@ -18,6 +18,7 @@ const id = computed(() => String(route.params.id));
 const coverImageFile = ref<File | null>(null);
 const existingCover = ref('');
 const errors = ref<Record<string, string>>({});
+const blogCategories = ['Tutorial', 'Guide', 'Opinion', 'Case Study'] as const;
 
 const form = reactive({
   title: '',
@@ -108,7 +109,9 @@ function submit() {
     <h1 class="text-2xl font-semibold">Edit Post</h1>
     <div class="grid gap-3 md:grid-cols-2">
       <input v-model="form.title" class="rounded-md border p-2" placeholder="Title" />
-      <input v-model="form.category" class="rounded-md border p-2" placeholder="Category" />
+      <select v-model="form.category" class="rounded-md border p-2">
+        <option v-for="category in blogCategories" :key="category" :value="category">{{ category }}</option>
+      </select>
       <input v-model.number="form.readingTimeMin" type="number" min="1" class="rounded-md border p-2" placeholder="Reading time" />
       <input v-model="form.coverImageUrl" class="rounded-md border p-2 md:col-span-2" placeholder="Cover Image URL" />
     </div>
