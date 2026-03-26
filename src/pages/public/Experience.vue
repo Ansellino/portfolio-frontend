@@ -123,9 +123,6 @@ function getResponsibilities(item: any): string[] {
 	<section class="mx-auto max-w-5xl space-y-7 px-4 py-8 sm:space-y-8 sm:py-10">
 		<header class="space-y-2">
 			<h1 class="text-2xl font-bold sm:text-3xl">Work Experience</h1>
-			<p class="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-				Professional timeline of software engineering, product development, and cross-functional delivery.
-			</p>
 		</header>
 
 		<div class="relative pl-8 sm:pl-10">
