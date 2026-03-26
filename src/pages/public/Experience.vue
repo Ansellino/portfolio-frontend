@@ -94,6 +94,15 @@ function fmt(value?: string) {
 	return d.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
+function formatEmploymentType(value?: string) {
+	if (!value) return 'Role';
+	return String(value)
+		.replace(/[_-]/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim()
+		.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 function getResponsibilities(item: any): string[] {
 	if (Array.isArray(item?.responsibilities)) {
 		return item.responsibilities.filter((value: unknown) => typeof value === 'string' && value.trim().length > 0);
@@ -111,24 +120,76 @@ function getResponsibilities(item: any): string[] {
 </script>
 
 <template>
-	<section class="mx-auto max-w-4xl space-y-6 px-4 py-10">
-		<h1 class="text-3xl font-bold">Experience</h1>
-		<div class="space-y-5 border-l pl-6">
-			<article v-for="item in timeline" :key="item.id" class="relative rounded-xl border bg-card p-4">
-				<span class="absolute -left-[31px] top-6 h-3 w-3 rounded-full bg-primary" />
-				<p class="text-xs uppercase tracking-wide text-muted-foreground">{{ fmt(item.startDate) }} - {{ fmt(item.endDate) }}</p>
-				<h2 class="mt-1 text-lg font-semibold">{{ item.position }} · {{ item.company }}</h2>
-				<p class="mt-1 text-sm text-muted-foreground">{{ item.location }} · {{ item.employmentType }}</p>
-				<p class="mt-3 text-sm">{{ item.description }}</p>
-				<div v-if="getResponsibilities(item).length" class="mt-3">
-					<p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Responsibilities</p>
-					<ul class="mt-2 list-disc space-y-1 pl-5 text-sm">
-						<li v-for="(responsibility, index) in getResponsibilities(item)" :key="`${item.id}-responsibility-${index}`">
-							{{ responsibility }}
-						</li>
-					</ul>
-				</div>
-			</article>
+	<section class="mx-auto max-w-5xl space-y-7 px-4 py-8 sm:space-y-8 sm:py-10">
+		<header class="space-y-2">
+			<h1 class="text-2xl font-bold sm:text-3xl">Work Experience</h1>
+			<p class="max-w-3xl text-sm leading-relaxed text-muted-foreground">
+				Professional timeline of software engineering, product development, and cross-functional delivery.
+			</p>
+		</header>
+
+		<div class="relative pl-8 sm:pl-10">
+			<div class="absolute bottom-0 left-[11px] top-0 w-px bg-border sm:left-[15px]" />
+			<div class="space-y-4 sm:space-y-5">
+				<article
+					v-for="(item, index) in timeline"
+					:key="item.id"
+					class="exp-card relative rounded-xl border bg-card p-4 shadow-sm transition-colors hover:border-primary/30 sm:p-5"
+					:style="{ animationDelay: `${Math.min(index, 10) * 70}ms` }"
+				>
+					<span class="absolute -left-[23px] top-7 h-3.5 w-3.5 rounded-full border-2 border-background bg-primary sm:-left-[29px]" />
+
+					<div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+						<span class="rounded-full border bg-background px-2 py-1 font-medium uppercase tracking-wide">
+							{{ formatEmploymentType(item.employmentType) }}
+						</span>
+						<span>{{ fmt(item.startDate) }} - {{ fmt(item.endDate) }}</span>
+					</div>
+
+					<div class="mt-2 flex flex-wrap items-start justify-between gap-2">
+						<h2 class="text-lg font-semibold leading-snug">{{ item.position }} · {{ item.company }}</h2>
+						<span class="text-sm text-muted-foreground">{{ item.location || 'Remote' }}</span>
+					</div>
+
+					<p v-if="item.description" class="mt-3 text-sm leading-relaxed text-muted-foreground">{{ item.description }}</p>
+
+					<div v-if="getResponsibilities(item).length" class="mt-4">
+						<p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Key Contributions</p>
+						<ul class="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed">
+							<li
+								v-for="(responsibility, index) in getResponsibilities(item)"
+								:key="`${item.id}-responsibility-${index}`"
+								class="text-foreground/90"
+							>
+								{{ responsibility }}
+							</li>
+						</ul>
+					</div>
+				</article>
+			</div>
 		</div>
 	</section>
 </template>
+
+<style scoped>
+.exp-card {
+	opacity: 0;
+	transform: translateY(10px);
+	animation: exp-card-enter 0.45s ease forwards;
+}
+
+@keyframes exp-card-enter {
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.exp-card {
+		opacity: 1;
+		transform: none;
+		animation: none;
+	}
+}
+</style>

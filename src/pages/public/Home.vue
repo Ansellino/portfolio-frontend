@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/vue-query';
 import { useHead } from '@unhead/vue';
 import { projectsApi } from '@/api/projects.api';
 import { blogApi } from '@/api/blog.api';
-import { certificationsApi } from '@/api/certification.api';
 import { experiencesApi } from '@/api/experience.api';
 import { profileApi } from '@/api/profile.api';
 import { usePageSeo } from '@/composables/usePageSeo';
@@ -49,9 +48,9 @@ const postsQuery = useQuery({
 	queryFn: () => blogApi.getAll({ isPublished: true, limit: 3 }).then((r) => r.data),
 });
 
-const certificationsQuery = useQuery({
-	queryKey: ['home-certifications-count'],
-	queryFn: () => certificationsApi.getAll({ isPublished: true }).then((r) => r.data),
+const postsCountQuery = useQuery({
+	queryKey: ['home-published-posts-count'],
+	queryFn: () => blogApi.getAll({ isPublished: true }).then((r) => r.data),
 });
 
 const experiencesQuery = useQuery({
@@ -66,7 +65,25 @@ const profileQuery = useQuery({
 
 const featuredProjects = computed(() => unwrapList(featuredQuery.data.value));
 const latestPosts = computed(() => unwrapList(postsQuery.data.value).slice(0, 3));
-const certsCount = computed(() => unwrapList(certificationsQuery.data.value).length);
+const publishedPostsCount = computed(() => unwrapList(postsCountQuery.data.value).length);
+const experiencesCount = computed(() => unwrapList(experiencesQuery.data.value).length);
+const metricCards = computed(() => [
+	{
+		label: 'Featured Projects',
+		value: featuredProjects.value.length,
+		to: '/projects',
+	},
+	{
+		label: 'Published Articles',
+		value: publishedPostsCount.value,
+		to: '/blog',
+	},
+	{
+		label: 'Experience Entries',
+		value: experiencesCount.value,
+		to: '/experience',
+	},
+]);
 const profile = computed(() => {
 	const data = profileQuery.data.value?.data ?? profileQuery.data.value;
 	if (data) return data;
@@ -75,18 +92,6 @@ const profile = computed(() => {
 		headline: 'Software Engineer',
 		bio: 'Focused on modern web products, resilient systems, and practical AI-enabled workflows.',
 	};
-});
-
-const experienceYears = computed(() => {
-	const experiences = unwrapList(experiencesQuery.data.value);
-	if (!experiences.length) return 2;
-	const earliest = experiences
-		.map((item) => new Date(item.startDate).getTime())
-		.filter((ts) => Number.isFinite(ts))
-		.sort((a, b) => a - b)[0];
-	if (!earliest) return 2;
-	const years = Math.max(1, Math.floor((Date.now() - earliest) / (1000 * 60 * 60 * 24 * 365)));
-	return years;
 });
 
 const carouselRef = ref<HTMLElement | null>(null);
@@ -114,18 +119,16 @@ function scrollCarousel(direction: 1 | -1) {
 		</div>
 
 		<div class="grid gap-4 sm:grid-cols-3">
-			<article class="rounded-xl border bg-card p-5">
-				<p class="text-sm text-muted-foreground">Projects</p>
-				<p class="mt-2 text-3xl font-semibold">{{ featuredProjects.length }}</p>
-			</article>
-			<article class="rounded-xl border bg-card p-5">
-				<p class="text-sm text-muted-foreground">Certifications</p>
-				<p class="mt-2 text-3xl font-semibold">{{ certsCount }}</p>
-			</article>
-			<article class="rounded-xl border bg-card p-5">
-				<p class="text-sm text-muted-foreground">Experience (Years)</p>
-				<p class="mt-2 text-3xl font-semibold">{{ experienceYears }}+</p>
-			</article>
+			<RouterLink
+				v-for="metric in metricCards"
+				:key="metric.label"
+				:to="metric.to"
+				class="group rounded-xl border bg-card p-5 transition-colors hover:border-primary/40 hover:bg-accent/30"
+			>
+				<p class="text-sm text-muted-foreground">{{ metric.label }}</p>
+				<p class="mt-2 text-3xl font-semibold">{{ metric.value }}</p>
+				<p class="mt-2 text-xs text-muted-foreground group-hover:text-primary">View details</p>
+			</RouterLink>
 		</div>
 
 			<section class="space-y-4">
