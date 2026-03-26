@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { certificationsApi } from '@/api/certification.api';
 import { usePageSeo } from '@/composables/usePageSeo';
+import BackendWaitingNotice from '@/components/portfolio/BackendWaitingNotice.vue';
 import { Button } from '@/components/ui/button';
 
 usePageSeo({
@@ -34,11 +35,18 @@ function unwrapList(payload: any): any[] {
 const query = useQuery({
 	queryKey: ['public-certifications'],
 	queryFn: () => certificationsApi.getAll({ isPublished: true }).then((r) => r.data),
+	retry: true,
+	retryDelay: 3000,
+	refetchInterval: (state) => (state.state.data ? false : 5000),
 });
+
+const isWaitingBackend = computed(
+	() => !query.data.value && (query.isFetching.value || query.isError.value)
+);
 
 const grouped = computed(() => {
 	const entries = unwrapList(query.data.value);
-	const list = entries.length ? entries : fallbackCertifications;
+	const list = entries.length ? entries : isWaitingBackend.value ? [] : fallbackCertifications;
 	const groups = new Map<string, any[]>();
 	for (const cert of list) {
 		const key = cert.category || 'Other';
@@ -52,6 +60,11 @@ const grouped = computed(() => {
 
 <template>
 	<section class="mx-auto max-w-6xl space-y-8 px-4 py-10">
+		<BackendWaitingNotice
+			v-if="isWaitingBackend"
+			description="Data certifications akan muncul otomatis saat koneksi berhasil."
+		/>
+
 		<h1 class="text-3xl font-bold">Certifications</h1>
 
 		<section v-for="[category, certs] in grouped" :key="category" class="space-y-3">

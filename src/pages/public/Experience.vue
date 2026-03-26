@@ -134,14 +134,14 @@ function getResponsibilities(item: any): string[] {
 
 <template>
 	<section class="mx-auto max-w-5xl space-y-7 px-4 py-8 sm:space-y-8 sm:py-10">
-		<header class="space-y-2">
-			<h1 class="text-2xl font-bold sm:text-3xl">Work Experience</h1>
-		</header>
-
 		<BackendWaitingNotice
 			v-if="isWaitingBackend"
 			description="Data experience akan muncul otomatis saat koneksi berhasil."
 		/>
+
+		<header class="space-y-2">
+			<h1 class="text-2xl font-bold sm:text-3xl">Work Experience</h1>
+		</header>
 
 		<div class="relative pl-8 sm:pl-10">
 			<div class="absolute bottom-0 left-[11px] top-0 w-px bg-border sm:left-[15px]" />
