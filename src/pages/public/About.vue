@@ -10,6 +10,7 @@ import BackendWaitingNotice from '@/components/portfolio/BackendWaitingNotice.vu
 import { Button } from '@/components/ui/button';
 
 const siteUrl = (import.meta.env.VITE_SITE_URL || 'https://example.com').replace(/\/$/, '');
+const resumeDownloadUrl = `${(import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')}/resume/download`;
 
 usePageSeo({
 	title: 'About',
@@ -161,7 +162,7 @@ useHead({
 				<p class="text-muted-foreground">{{ profile.headline }}</p>
 				<p class="mt-4 text-justify leading-relaxed">{{ profile.bio }}</p>
 			</div>
-			<Button as-child class="mt-5" variant="secondary"><a href="/resume.pdf" download>Download Resume</a></Button>
+			<Button as-child class="mt-5" variant="secondary"><a :href="resumeDownloadUrl">Download Resume</a></Button>
 		</article>
 
 		<article class="rounded-xl border bg-card p-6">

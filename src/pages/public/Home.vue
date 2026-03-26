@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { unwrapList } from '@/utils/unwrapList';
 
 const siteUrl = (import.meta.env.VITE_SITE_URL || 'https://example.com').replace(/\/$/, '');
+const resumeDownloadUrl = `${(import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')}/resume/download`;
 
 usePageSeo({
 	title: 'Portfolio',
@@ -185,7 +186,7 @@ function scrollCarousel(direction: 1 | -1) {
 			<div class="mt-6 grid gap-3 sm:flex sm:flex-wrap">
 				<Button as-child><RouterLink to="/projects">View Projects</RouterLink></Button>
 				<Button as-child variant="outline"><RouterLink to="/contact">Contact Me</RouterLink></Button>
-				<Button as-child variant="secondary"><a href="/resume.pdf" download>Download Resume</a></Button>
+				<Button as-child variant="secondary"><a :href="resumeDownloadUrl">Download Resume</a></Button>
 			</div>
 		</div>
 
