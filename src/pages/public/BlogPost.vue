@@ -79,7 +79,7 @@ useHead({
 
 <template>
 	<section class="mx-auto grid max-w-6xl gap-6 px-4 py-8 sm:gap-8 sm:py-10 lg:grid-cols-[1fr_280px]">
-		<article class="space-y-5">
+		<article class="min-w-0 space-y-5">
 			<RouterLink to="/blog" class="text-sm font-medium text-primary">Back to blog</RouterLink>
 
 			<BackendWaitingNotice
@@ -112,7 +112,7 @@ useHead({
 					</a>
 				</div>
 
-				<div class="article-content rounded-xl border p-4">
+				<div class="article-content min-w-0 rounded-xl border p-4">
 					<MdPreview :editor-id="previewId" :model-value="post.content || ''" />
 				</div>
 			</div>
@@ -128,10 +128,45 @@ useHead({
 </template>
 
 <style scoped>
+.article-content :deep(.md-editor-preview),
+.article-content :deep(.md-editor-preview-wrapper) {
+	min-width: 0;
+	max-width: 100%;
+}
+
+.article-content :deep(img),
+.article-content :deep(video),
+.article-content :deep(iframe) {
+	max-width: 100%;
+	height: auto;
+}
+
+.article-content :deep(iframe) {
+	width: 100%;
+}
+
+.article-content :deep(a),
+.article-content :deep(p),
+.article-content :deep(li),
+.article-content :deep(blockquote) {
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+.article-content :deep(:not(pre) > code) {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
 .article-content :deep(pre),
 .article-content :deep(table) {
 	overflow-x: auto;
 	max-width: 100%;
 	display: block;
+}
+
+.article-content :deep(pre code) {
+	white-space: pre;
 }
 </style>

@@ -52,7 +52,7 @@ onBeforeUnmount(() => {
 
 <template>
   <header class="sticky top-0 z-30 border-b bg-background/90 backdrop-blur">
-    <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5 sm:py-3">
+    <nav class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
       <RouterLink to="/" class="flex items-center" aria-label="Home">
         <img src="/logo.png" alt="Logo" class="h-7 w-auto sm:h-8" />
       </RouterLink>
@@ -110,8 +110,11 @@ onBeforeUnmount(() => {
       leave-from-class="translate-y-0 opacity-100"
       leave-to-class="-translate-y-2 opacity-0"
     >
-      <div v-if="mobileOpen" class="relative z-30 border-t bg-background/95 shadow-md md:hidden backdrop-blur">
-        <ul class="mx-auto max-w-6xl space-y-1.5 px-4 py-3">
+      <div
+        v-if="mobileOpen"
+        class="fixed inset-x-0 top-14 z-30 max-h-[calc(100dvh-3.5rem)] overflow-y-auto border-t bg-background/95 shadow-md backdrop-blur md:hidden"
+      >
+        <ul class="mx-auto max-w-6xl space-y-1.5 px-4 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
           <li v-for="item in navItems" :key="item.to">
             <RouterLink
               :to="item.to"
